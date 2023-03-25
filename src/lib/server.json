@@ -4,7 +4,7 @@
     "set",
     "port",
     [
-      ["seek", "parseInt"],
+      ["at", "parseInt"],
       ["call", ["get", "environmentPort"], 10]
     ]
   ],

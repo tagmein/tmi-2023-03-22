@@ -1,8 +1,41 @@
+// plain text content type header
+set plainText 'text/plain; charset=utf-8'
+
+// get port from environment variable PORT
 set environmentPort [
- seek process env PORT
+ at process env PORT
 ]
+
+// set port to run on
 set port [
- seek parseInt
- call [ get environmentPort ] 10
+ at parseInt, call [ get environmentPort ] 10
+ default 3456
 ]
-log 'Starting server on port' [ get port ]
+
+// notify when server is listening
+set ready [
+ function [
+  log 'Starting server on port' [ get port ]
+ ]
+]
+
+// create request handler
+set agent [
+ function request response [
+  set [ get response ] statusCode 200
+  with at [ get response ] [
+   [ setHeader, call Content-Type [ get plainText ] ]
+   [ end, call 'hello world' ]
+  ]
+ ]
+]
+
+// create http server
+set server [
+ at require, call http
+ at createServer, call [ get agent ]
+]
+
+// start server
+at [ get server ] listen
+call [ get port ] 0.0.0.0 [ get ready ]

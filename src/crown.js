@@ -3,6 +3,10 @@ const path = require('path')
 
 const parse = require('./parse')
 
+const SCOPE = {
+ PARENT: Symbol('SCOPE:PARENT')
+}
+
 function uncrown(value) {
  return typeof value === 'object' && ('current' in value)
   ? value.current()
@@ -11,7 +15,36 @@ function uncrown(value) {
 
 module.exports = function crown(context = globalThis, names = new Map) {
  let currentValue = context
+ let lastComment
  const me = {
+  '//'(comment) {
+   lastComment = comment
+   return me
+  },
+  at(...path) {
+   for (const segment of path) {
+    if (typeof segment === 'string') {
+     if (currentValue && (segment in currentValue)) {
+      const nextValue = currentValue[segment]
+      if (typeof nextValue === 'function') {
+       currentValue = currentValue[segment]
+        .bind(currentValue)
+      }
+      else {
+       currentValue = currentValue[segment]
+      }
+     }
+     else {
+      currentValue = undefined
+      break
+     }
+    }
+    else {
+     currentValue = uncrown(segment)
+    }
+   }
+   return me
+  },
   call(...argumentCrowns) {
    if (typeof currentValue !== 'function') {
     throw new Error(`Expecting value to be a function, but got: ${typeof currentValue}`)
@@ -22,16 +55,50 @@ module.exports = function crown(context = globalThis, names = new Map) {
    return me
   },
   clone() {
-   return crown(currentValue, names)
+   const newNames = new Map
+   newNames.set(SCOPE.PARENT, names)
+   return crown(currentValue, newNames)
+  },
+  comment() {
+   return lastComment
   },
   current() {
    return currentValue
   },
+  default(crownValue) {
+   const value = uncrown(crownValue)
+   if (currentValue === null || currentValue === undefined || isNaN(currentValue)) {
+    currentValue = value
+   }
+   return me
+  },
+  'function'(...argumentNames) {
+   const functionImplementation = argumentNames.pop()
+   currentValue = function (...runtimeArguments) {
+    const scopeCrown = me.clone()
+    for (const index in argumentNames) {
+     scopeCrown.set(
+      argumentNames[index],
+      runtimeArguments[index]
+     )
+    }
+    scopeCrown.walk(functionImplementation)
+    return scopeCrown
+   }
+   return me
+  },
   get(name) {
-   if (!names.has(name)) {
+   let searchScope = names
+   while (searchScope.has(SCOPE.PARENT)) {
+    if (searchScope.has(name)) {
+     break
+    }
+    searchScope = searchScope.get(SCOPE.PARENT)
+   }
+   if (!searchScope.has(name)) {
     throw new Error(`name ${JSON.stringify(name)} is not set`)
    }
-   currentValue = names.get(name)
+   currentValue = searchScope.get(name)
   },
   log(...values) {
    console.log(...values.map(uncrown))
@@ -50,26 +117,28 @@ module.exports = function crown(context = globalThis, names = new Map) {
   runJsonFile(source) {
    return me.walk(
     crown()
-     .seek('require')
+     .at('require')
      .call(
       crown().value(source)
      )
    )
   },
-  seek(...path) {
-   for (const segment of path) {
-    if (currentValue && (segment in currentValue)) {
-     currentValue = currentValue[segment]
+  set(...path) {
+   const value = path.pop()
+   const name = path.pop()
+   if (path.length) {
+    const context = uncrown(me.at(...path))
+    if (context === 'null') {
+     throw new Error(`cannot set property "${name}" of null`)
     }
-    else {
-     currentValue = undefined
-     break
+    if (typeof context !== 'object') {
+     throw new Error(`cannot set property "${name}" of ${typeof context}`)
     }
+    context[name] = uncrown(value)
    }
-   return me
-  },
-  set(name, value) {
-   names.set(name, uncrown(value))
+   else {
+    names.set(name, uncrown(value))
+   }
    return me
   },
   toString() {
@@ -103,13 +172,26 @@ module.exports = function crown(context = globalThis, names = new Map) {
     if (!(command in me)) {
      throw new Error(`walk[${statementIndex}]: "${command}" is not a valid operation`)
     }
+    const automaticWalk = {
+     function: false,
+     with: false
+    }[command] ?? true
     me[command](
      ...arguments.map(
-      x => Array.isArray(x)
+      x => automaticWalk && Array.isArray(x)
        ? me.clone().walk(crown(x))
        : x
      )
     )
+   }
+   return me
+  },
+  with(...commands) {
+   const statements = commands.pop()
+   for (const statement of statements) {
+    const [prefix, ...rest] = statement[0]
+    const compound = [commands.concat(prefix)].concat(rest)
+    me.walk(compound)
    }
    return me
   }

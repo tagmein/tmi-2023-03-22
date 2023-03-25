@@ -25,6 +25,10 @@ const INITIAL = {
   control.queueToStatement()
   control.statementToBlock()
  },
+ ','(control) {
+  control.queueToStatement()
+  control.statementToBlock()
+ },
  "'"(control) {
   control.queueToStatement()
   return STRING
