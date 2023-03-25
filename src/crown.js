@@ -17,7 +17,7 @@ module.exports = function crown(context = globalThis, names = new Map) {
  let currentValue = context
  let lastComment
  const me = {
-  '//'(comment) {
+  '#'(comment) {
    lastComment = comment
    return me
   },
