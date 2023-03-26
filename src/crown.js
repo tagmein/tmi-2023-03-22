@@ -1,19 +1,18 @@
-const fs = require('fs')
-const path = require('path')
-
-const parse = require('./parse')
+const [fs, parse, path] = [
+ 'fs', './parse', 'path'
+].map(globalThis.require)
 
 const SCOPE = {
  PARENT: Symbol('SCOPE:PARENT')
 }
 
 function uncrown(value) {
- return typeof value === 'object' && ('current' in value)
+ return typeof value === 'object' && value !== null && ('current' in value)
   ? value.current()
   : value
 }
 
-module.exports = function crown(context = globalThis, names = new Map) {
+module.exports = function crown(context = globalThis, names = new Map, basePath = __dirname) {
  let currentValue = context
  let lastComment
  const me = {
@@ -22,9 +21,13 @@ module.exports = function crown(context = globalThis, names = new Map) {
    return me
   },
   at(...path) {
+   let isFirstSegment = true
    for (const segment of path) {
     if (typeof segment === 'string') {
-     if (currentValue && (segment in currentValue)) {
+     const test = typeof currentValue === 'object'
+      ? currentValue
+      : Object.getPrototypeOf(currentValue)
+     if (currentValue !== undefined && currentValue !== null && (segment in test)) {
       const nextValue = currentValue[segment]
       if (typeof nextValue === 'function') {
        currentValue = currentValue[segment]
@@ -40,8 +43,28 @@ module.exports = function crown(context = globalThis, names = new Map) {
      }
     }
     else {
-     currentValue = uncrown(segment)
+     const candidate = uncrown(segment)
+     if (isFirstSegment) {
+      currentValue = candidate
+     }
+     else {
+      if (currentValue && (candidate in currentValue)) {
+       const nextValue = currentValue[candidate]
+       if (typeof nextValue === 'function') {
+        currentValue = currentValue[candidate]
+         .bind(currentValue)
+       }
+       else {
+        currentValue = currentValue[candidate]
+       }
+      }
+      else {
+       currentValue = undefined
+       break
+      }
+     }
     }
+    isFirstSegment = false
    }
    return me
   },
@@ -50,14 +73,16 @@ module.exports = function crown(context = globalThis, names = new Map) {
     throw new Error(`Expecting value to be a function, but got: ${typeof currentValue}`)
    }
    currentValue = currentValue(
-    ...argumentCrowns.map(uncrown)
+    ...argumentCrowns.map(
+     x => x === me ? x : uncrown(x)
+    )
    )
    return me
   },
   clone() {
    const newNames = new Map
    newNames.set(SCOPE.PARENT, names)
-   return crown(currentValue, newNames)
+   return crown(currentValue, newNames, basePath)
   },
   comment() {
    return lastComment
@@ -67,12 +92,21 @@ module.exports = function crown(context = globalThis, names = new Map) {
   },
   default(crownValue) {
    const value = uncrown(crownValue)
-   if (currentValue === null || currentValue === undefined || isNaN(currentValue)) {
+   if (currentValue === null || currentValue === undefined || (
+    typeof currentValue === 'number'
+    && isNaN(currentValue)
+   )) {
     currentValue = value
    }
    return me
   },
-  'function'(...argumentNames) {
+  false(instructionCrown) {
+   if (!currentValue) {
+    me.clone()
+     .walk(uncrown(instructionCrown))
+   }
+  },
+  function(...argumentNames) {
    const functionImplementation = argumentNames.pop()
    currentValue = function (...runtimeArguments) {
     const scopeCrown = me.clone()
@@ -100,16 +134,48 @@ module.exports = function crown(context = globalThis, names = new Map) {
    }
    currentValue = searchScope.get(name)
   },
+  load(filePath) {
+   const code = parse(fs.readFileSync(
+    path.join(basePath, filePath),
+    'utf-8'
+   ))
+   const fileModule = eval(`(
+    function () {
+     return function ${filePath.replace(/[^a-zA-Z]+/g, '_')
+    } (scope) {
+     scope.walk(${JSON.stringify(code)})
+    }})()`)
+   currentValue = fileModule
+   return me
+  },
   log(...values) {
    console.log(...values.map(uncrown))
+  },
+  object(definition) {
+   currentValue = {}
+   for (const [[[k, v]]] of definition) {
+    const scope = me.clone()
+    currentValue[k] = Array.isArray(v)
+     ? scope.walk(v).current()
+     : v
+   }
+   return me
+  },
+  point() {
+   if (typeof currentValue !== 'function') {
+    throw new Error(`current value must be function, got ${typeof currentValue}`)
+   }
+   currentValue(me.clone())
   },
   run([source]) {
    return me.walk(parse(source))
   },
   runFile(source) {
+   const filePath = path.join(__dirname, source)
+   basePath = path.dirname(filePath)
    return me.run([
     fs.readFileSync(
-     path.join(__dirname, source),
+     filePath,
      'utf-8'
     )
    ])
@@ -141,6 +207,16 @@ module.exports = function crown(context = globalThis, names = new Map) {
    }
    return me
   },
+  template(template, ...parameterCrowns) {
+   const parameters = parameterCrowns.map(uncrown)
+   currentValue = template.replace(
+    /%(\d+)/g,
+    function (_, index) {
+     return parameters[parseInt(index, 10)]
+    }
+   )
+   return me
+  },
   toString() {
    const currentValueString = Array.isArray(currentValue)
     ? `Array (${currentValue.length})`
@@ -149,6 +225,12 @@ module.exports = function crown(context = globalThis, names = new Map) {
     ? currentValueString
     : currentValue?.constructor?.name
    return `crown with ${typeof currentValue}: ${currentValueDescription}`
+  },
+  true(instructionCrown) {
+   if (currentValue) {
+    me.clone()
+     .walk(uncrown(instructionCrown))
+   }
   },
   value(newValue) {
    currentValue = newValue
@@ -160,7 +242,7 @@ module.exports = function crown(context = globalThis, names = new Map) {
     throw new Error(`walk expects an Array, got: ${typeof instructions}`)
    }
    if (instructions.length === 0) {
-    throw new Error('walk expects at least one instruction, 0 provided')
+    return me
    }
    const wrappedInstructions = Array.isArray(instructions[0]) ? instructions : [instructions]
    for (const statementIndex in wrappedInstructions) {
@@ -173,7 +255,10 @@ module.exports = function crown(context = globalThis, names = new Map) {
      throw new Error(`walk[${statementIndex}]: "${command}" is not a valid operation`)
     }
     const automaticWalk = {
+     false: false,
      function: false,
+     object: false,
+     true: false,
      with: false
     }[command] ?? true
     me[command](
