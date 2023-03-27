@@ -18,7 +18,5 @@ at [ get toolbar ] classList add, call [
    height: 60px;
   }
  '
- get style, point
- at get, call className
- at current, call
+ get style, point, extract className
 ]
