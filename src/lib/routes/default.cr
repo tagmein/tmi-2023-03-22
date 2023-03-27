@@ -1,5 +1,6 @@
 set contentTypes [
  object [
+  [cr   text/plain]
   [css  text/css]
   [gif  image/gif]
   [html text/html]
@@ -32,9 +33,13 @@ at [ get fs ] readFile, call [
   ]
   false [
    set [ get response ] statusCode 200
+   set contentType [
+    at [ get contentTypes ] [ get extension ]
+    default [ at [ get contentTypes ] txt ]
+   ]
    with at [ get response ] [
     [ setHeader, call Content-Type [
-     at [ get contentTypes ] [ get extension ]
+     at [ get contentType ] 
     ] ]
     [ end, call [ get data ] ]
    ]
