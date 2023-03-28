@@ -213,11 +213,6 @@ function crown(
   do() {
    return me
   },
-  extract(...names) {
-   currentValue = currentValue.__get(
-    ...names.map(uncrown)
-   )
-  },
   async false(instructionCrown) {
    if (!currentValue) {
     await me
@@ -242,19 +237,6 @@ function crown(
     return scopeCrown
    }
    return me
-  },
-  __get(name) {
-   let searchScope = names
-   while (searchScope.has(SCOPE.PARENT)) {
-    if (searchScope.has(name)) {
-     break
-    }
-    searchScope = searchScope.get(SCOPE.PARENT)
-   }
-   if (!searchScope.has(name)) {
-    return undefined
-   }
-   return searchScope.get(name)
   },
   get(name) {
    let searchScope = names
@@ -319,7 +301,9 @@ function crown(
      `current value must be function, got ${typeof currentValue}`
     )
    }
-   currentValue = await currentValue(me.clone())
+   currentValue = (
+    await currentValue(me.clone())
+   ).current()
    return me
   },
   async prepend(...commands) {

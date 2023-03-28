@@ -15,3 +15,5 @@ set [ get styleElement ] innerText [
 ]
 
 at [ get document ] head appendChild, call [ get styleElement ]
+
+at [ get className ]

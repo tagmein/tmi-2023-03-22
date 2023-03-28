@@ -1,4 +1,4 @@
-set document [ at document ], # todo remove need for this
+set document [ at document ]
 
 set style [ load ./lib/style.cr ]
 
@@ -7,7 +7,6 @@ set toolbar [
 ]
 
 at document body appendChild, call [ get toolbar ]
-
 
 at [ get toolbar ] classList add, call [
  set rules '
@@ -18,5 +17,5 @@ at [ get toolbar ] classList add, call [
    height: 60px;
   }
  '
- get style, point, extract className
+ get style, point
 ]
