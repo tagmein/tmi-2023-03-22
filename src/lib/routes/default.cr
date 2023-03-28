@@ -37,11 +37,11 @@ at [ get fs ] readFile, call [
     at [ get contentTypes ] [ get extension ]
     default [ at [ get contentTypes ] txt ]
    ]
-   with at [ get response ] [
-    [ setHeader, call Content-Type [
-     at [ get contentType ] 
-    ] ]
-    [ end, call [ get data ] ]
+
+   do [
+     at [ get response ]
+     do [ at setHeader, call Content-Type [ get contentType ] ]
+     do [ at [ get response ] end, call [ get data ] ]
    ]
   ]
  ]

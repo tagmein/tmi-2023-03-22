@@ -9,9 +9,10 @@ at [ get fs ] readFile, call [
 ] utf-8 [
  function error data [
   set [ get response ] statusCode 200
-  with at [ get response ] [
-   [ setHeader, call Content-Type [ get html ] ]
-   [ end, call [ get data ] ]
+  do [
+   at [ get response ]
+   do [ at setHeader, call Content-Type [ get html ] ]
+   do [ at end, call [ get data ] ]
   ]
  ]
 ]

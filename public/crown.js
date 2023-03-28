@@ -1,31 +1,40 @@
-const globalBasePath = typeof __dirname === 'string'
- ? __dirname
- : location.pathname.replace(/\/$/, '')
+const globalBasePath =
+ typeof __dirname === 'string'
+  ? __dirname
+  : location.pathname.replace(/\/$/, '')
 
 let fs, path, parse
 
 if (typeof require !== 'function') {
- globalThis.loadCrownDependencies = async function () {
-  const [_fs, _path] = await Promise.all(['fs', 'path'].map(globalThis.require))
-  const [_parse] = await Promise.all([globalBasePath + '/parse.js'].map(globalThis.require))
-  fs = _fs
-  path = _path
-  parse = _parse
- }
+ globalThis.loadCrownDependencies =
+  async function () {
+   const [_fs, _path] = await Promise.all(
+    ['fs', 'path'].map(globalThis.require)
+   )
+   const [_parse] = await Promise.all(
+    [globalBasePath + '/parse.js'].map(
+     globalThis.require
+    )
+   )
+   fs = _fs
+   path = _path
+   parse = _parse
+  }
  globalThis.browserModules = {}
  const browserModuleDefinitions = {
   fs() {
    return {
-    async readFile(filePath, encoding, callback) { // encoding is ignored in browser
+    async readFile(filePath, encoding, callback) {
+     // encoding is ignored in browser
      try {
       const fileResponse = await fetch(filePath)
-      const fileContents = await fileResponse.text()
+      const fileContents =
+       await fileResponse.text()
       callback(undefined, fileContents)
-     }
-     catch (error) {
+     } catch (error) {
       callback(error)
      }
-    }
+    },
    }
   },
   path() {
@@ -37,31 +46,42 @@ if (typeof require !== 'function') {
     },
     join(...segments) {
      return segments.join('/')
-    }
+    },
    }
-  }
+  },
  }
 
- globalThis.require = async function (requirePath) {
+ globalThis.require = async function (
+  requirePath
+ ) {
   if (requirePath in browserModuleDefinitions) {
-   if (!(requirePath in globalThis.browserModules)) {
-    globalThis.browserModules[requirePath] = browserModuleDefinitions[requirePath]()
+   if (
+    !(requirePath in globalThis.browserModules)
+   ) {
+    globalThis.browserModules[requirePath] =
+     browserModuleDefinitions[requirePath]()
    }
-  }
-  else if (!(requirePath in globalThis.browserModules)) {
+  } else if (
+   !(requirePath in globalThis.browserModules)
+  ) {
    await new Promise(function (resolve, reject) {
-    browserModules.fs.readFile(requirePath, 'utf-8', function (error, contents) {
-     if (error) {
-      reject(error)
+    browserModules.fs.readFile(
+     requirePath,
+     'utf-8',
+     function (error, contents) {
+      if (error) {
+       reject(error)
+      } else {
+       const scriptElement =
+        document.createElement('script')
+       scriptElement.innerHTML = `const module = {}\n${contents}\nglobalThis.browserModules[${JSON.stringify(
+        requirePath
+       )}] = module.exports`
+       document.head.appendChild(scriptElement)
+       resolve()
+      }
      }
-     else {
-      const scriptElement = document.createElement('script')
-      scriptElement.innerHTML = `const module = {}\n${contents}\nglobalThis.browserModules[${JSON.stringify(requirePath)
-       }] = module.exports`
-      document.head.appendChild(scriptElement)
-      resolve()
-     }
-    })
+    )
    })
   }
   return globalThis.browserModules[requirePath]
@@ -69,16 +89,22 @@ if (typeof require !== 'function') {
 }
 
 const SCOPE = {
- PARENT: Symbol('SCOPE:PARENT')
+ PARENT: Symbol('SCOPE:PARENT'),
 }
 
 function uncrown(value) {
- return typeof value === 'object' && value !== null && ('current' in value)
+ return typeof value === 'object' &&
+  value !== null &&
+  'current' in value
   ? value.current()
   : value
 }
 
-function crown(context = globalThis, names = new Map, basePath = globalBasePath) {
+function crown(
+ context = globalThis,
+ names = new Map(),
+ basePath = globalBasePath
+) {
  let currentValue = context
  let lastComment
  const me = {
@@ -87,50 +113,58 @@ function crown(context = globalThis, names = new Map, basePath = globalBasePath)
    return me
   },
   add(...argumentCrowns) {
-   currentValue = argumentCrowns.reduce((sum, x) => sum + uncrown(x), 0)
+   currentValue = argumentCrowns.reduce(
+    (sum, x) => sum + uncrown(x),
+    0
+   )
   },
   at(...path) {
    let isFirstSegment = true
    for (const segment of path) {
     if (typeof segment === 'string') {
-     if (currentValue === undefined || currentValue === null) {
-      throw new Error(`cannot read '${segment}' of ${currentValue}`)
+     if (
+      currentValue === undefined ||
+      currentValue === null
+     ) {
+      throw new Error(
+       `cannot read '${segment}' of ${currentValue}`
+      )
      }
-     const test = typeof currentValue === 'object'
-      ? currentValue
-      : Object.getPrototypeOf(currentValue)
+     const test =
+      typeof currentValue === 'object'
+       ? currentValue
+       : Object.getPrototypeOf(currentValue)
      if (segment in test) {
       const nextValue = currentValue[segment]
       if (typeof nextValue === 'function') {
+       currentValue =
+        currentValue[segment].bind(currentValue)
+      } else {
        currentValue = currentValue[segment]
-        .bind(currentValue)
       }
-      else {
-       currentValue = currentValue[segment]
-      }
-     }
-     else {
+     } else {
       currentValue = undefined
       break
      }
-    }
-    else {
+    } else {
      const candidate = uncrown(segment)
      if (isFirstSegment) {
       currentValue = candidate
-     }
-     else {
-      if (currentValue && (candidate in currentValue)) {
+     } else {
+      if (
+       currentValue &&
+       candidate in currentValue
+      ) {
        const nextValue = currentValue[candidate]
        if (typeof nextValue === 'function') {
+        currentValue =
+         currentValue[candidate].bind(
+          currentValue
+         )
+       } else {
         currentValue = currentValue[candidate]
-         .bind(currentValue)
        }
-       else {
-        currentValue = currentValue[candidate]
-       }
-      }
-      else {
+      } else {
        currentValue = undefined
        break
       }
@@ -142,17 +176,19 @@ function crown(context = globalThis, names = new Map, basePath = globalBasePath)
   },
   call(...argumentCrowns) {
    if (typeof currentValue !== 'function') {
-    throw new Error(`Expecting value to be a function, but got: ${typeof currentValue}`)
+    throw new Error(
+     `Expecting value to be a function, but got: ${typeof currentValue}`
+    )
    }
    currentValue = currentValue(
-    ...argumentCrowns.map(
-     x => x === me ? x : uncrown(x)
+    ...argumentCrowns.map((x) =>
+     x === me ? x : uncrown(x)
     )
    )
    return me
   },
   clone() {
-   const newNames = new Map
+   const newNames = new Map()
    newNames.set(SCOPE.PARENT, names)
    return crown(currentValue, newNames, basePath)
   },
@@ -164,26 +200,37 @@ function crown(context = globalThis, names = new Map, basePath = globalBasePath)
   },
   default(crownValue) {
    const value = uncrown(crownValue)
-   if (currentValue === null || currentValue === undefined || (
-    typeof currentValue === 'number'
-    && isNaN(currentValue)
-   )) {
+   if (
+    currentValue === null ||
+    currentValue === undefined ||
+    (typeof currentValue === 'number' &&
+     isNaN(currentValue))
+   ) {
     currentValue = value
    }
    return me
   },
+  do() {
+   return me
+  },
   extract(...names) {
-   currentValue = currentValue.__get(...names.map(uncrown))
+   currentValue = currentValue.__get(
+    ...names.map(uncrown)
+   )
   },
   async false(instructionCrown) {
    if (!currentValue) {
-    await me.clone()
+    await me
+     .clone()
      .walk(uncrown(instructionCrown))
    }
   },
   function(...argumentNames) {
-   const functionImplementation = argumentNames.pop()
-   currentValue = async function (...runtimeArguments) {
+   const functionImplementation =
+    argumentNames.pop()
+   currentValue = async function (
+    ...runtimeArguments
+   ) {
     const scopeCrown = me.clone()
     for (const index in argumentNames) {
      scopeCrown.set(
@@ -232,13 +279,16 @@ function crown(context = globalThis, names = new Map, basePath = globalBasePath)
      path.join(basePath, filePath),
      'utf-8',
      function (error, content) {
-      if (error) { reject(error) }
-      else {
+      if (error) {
+       reject(error)
+      } else {
        const code = parse(content)
        const fileModule = eval(`(
         function () {
-         return async function ${filePath.replace(/[^a-zA-Z]+/g, '_')
-        } (scope) {
+         return async function ${filePath.replace(
+          /[^a-zA-Z]+/g,
+          '_'
+         )} (scope) {
          await scope.walk(${JSON.stringify(code)})
          return scope
         }})()`)
@@ -265,18 +315,32 @@ function crown(context = globalThis, names = new Map, basePath = globalBasePath)
   },
   async point() {
    if (typeof currentValue !== 'function') {
-    throw new Error(`current value must be function, got ${typeof currentValue}`)
+    throw new Error(
+     `current value must be function, got ${typeof currentValue}`
+    )
    }
    currentValue = await currentValue(me.clone())
+   return me
+  },
+  async prepend(...commands) {
+   const statements = commands.pop()
+   for (const statement of statements) {
+    const [prefix, ...rest] = statement[0]
+    const compound = [
+     commands.concat(prefix),
+    ].concat(rest)
+    await me.walk(compound)
+   }
    return me
   },
   async run([source]) {
    return me.walk(parse(source))
   },
   async runFile(source) {
-   const filePath = basePath.length > 0
-    ? path.join(basePath, source)
-    : source
+   const filePath =
+    basePath.length > 0
+     ? path.join(basePath, source)
+     : source
    basePath = path.dirname(filePath)
    return new Promise(function (resolve, reject) {
     fs.readFile(
@@ -286,8 +350,7 @@ function crown(context = globalThis, names = new Map, basePath = globalBasePath)
       if (error) {
        reject(error)
        return
-      }
-      else {
+      } else {
        resolve(me.run([contents]))
       }
      }
@@ -298,9 +361,7 @@ function crown(context = globalThis, names = new Map, basePath = globalBasePath)
    return me.walk(
     crown()
      .at('require')
-     .call(
-      crown().value(source)
-     )
+     .call(crown().value(source))
    )
   },
   set(...path) {
@@ -309,14 +370,17 @@ function crown(context = globalThis, names = new Map, basePath = globalBasePath)
    if (path.length) {
     const context = uncrown(me.at(...path))
     if (context === 'null') {
-     throw new Error(`cannot set property "${name}" of null`)
+     throw new Error(
+      `cannot set property "${name}" of null`
+     )
     }
     if (typeof context !== 'object') {
-     throw new Error(`cannot set property "${name}" of ${typeof context}`)
+     throw new Error(
+      `cannot set property "${name}" of ${typeof context}`
+     )
     }
     context[name] = uncrown(value)
-   }
-   else {
+   } else {
     names.set(name, uncrown(value))
    }
    return me
@@ -332,17 +396,21 @@ function crown(context = globalThis, names = new Map, basePath = globalBasePath)
    return me
   },
   toString() {
-   const currentValueString = Array.isArray(currentValue)
+   const currentValueString = Array.isArray(
+    currentValue
+   )
     ? `Array (${currentValue.length})`
     : String(currentValue)
-   const currentValueDescription = currentValueString.length > 0
-    ? currentValueString
-    : currentValue?.constructor?.name
+   const currentValueDescription =
+    currentValueString.length > 0
+     ? currentValueString
+     : currentValue?.constructor?.name
    return `crown with ${typeof currentValue}: ${currentValueDescription}`
   },
   async true(instructionCrown) {
    if (currentValue) {
-    await me.clone()
+    await me
+     .clone()
      .walk(uncrown(instructionCrown))
    }
   },
@@ -353,55 +421,61 @@ function crown(context = globalThis, names = new Map, basePath = globalBasePath)
   async walk(instructionsCrown) {
    const instructions = uncrown(instructionsCrown)
    if (!Array.isArray(instructions)) {
-    throw new Error(`walk expects an Array, got: ${typeof instructions}`)
+    throw new Error(
+     `walk expects an Array, got: ${typeof instructions}`
+    )
    }
    if (instructions.length === 0) {
     return me
    }
-   const wrappedInstructions = Array.isArray(instructions[0]) ? instructions : [instructions]
+   const wrappedInstructions = Array.isArray(
+    instructions[0]
+   )
+    ? instructions
+    : [instructions]
    for (const statementIndex in wrappedInstructions) {
-    const statement = wrappedInstructions[statementIndex]
+    const statement =
+     wrappedInstructions[statementIndex]
     if (!Array.isArray(statement)) {
-     throw new Error(`walk[${statementIndex}] expects an Array, got: ${typeof statement}`)
+     throw new Error(
+      `walk[${statementIndex}] expects an Array, got: ${typeof statement}`
+     )
     }
     const [command, ...arguments] = statement
     if (!(command in me)) {
-     throw new Error(`walk[${statementIndex}]: "${command}" is not a valid operation`)
-    }
-    const automaticWalk = {
-     false: false,
-     function: false,
-     object: false,
-     true: false,
-     with: false
-    }[command] ?? true
-    await me[command](
-     ...(await Promise.all(arguments.map(
-      x => automaticWalk && Array.isArray(x)
-       ? me.clone().walk(crown(x))
-       : x
-     ))
+     throw new Error(
+      `walk[${statementIndex}]: "${command}" is not a valid operation`
      )
+    }
+    const automaticWalk =
+     {
+      false: false,
+      function: false,
+      object: false,
+      prepend: false,
+      true: false,
+     }[command] ?? true
+    await me[command](
+     ...(await Promise.all(
+      arguments.map((x) =>
+       automaticWalk && Array.isArray(x)
+        ? me.clone().walk(crown(x))
+        : x
+      )
+     ))
     )
    }
    return me
   },
-  async with(...commands) {
-   const statements = commands.pop()
-   for (const statement of statements) {
-    const [prefix, ...rest] = statement[0]
-    const compound = [commands.concat(prefix)].concat(rest)
-    await me.walk(compound)
-   }
-   return me
-  }
  }
  return me
 }
 
 if (typeof module === 'object') {
  const [_fs, _path] = ['fs', 'path'].map(require)
- const [_parse] = [globalBasePath + '/parse.js'].map(require)
+ const [_parse] = [
+  globalBasePath + '/parse.js',
+ ].map(require)
  fs = _fs
  path = _path
  parse = _parse
