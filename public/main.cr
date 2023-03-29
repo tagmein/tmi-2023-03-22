@@ -1,21 +1,22 @@
 set document [ at document ]
-
+set styleUnique [ object ]
 set style [ load ./lib/style.cr ]
 
-set toolbar [
- at document createElement, call div
+at [ load ./lib/global-style.cr ], point
+
+set build [
+ function parent child [
+  at [ get parent ] appendChild
+  call [ get child ]
+ ]
 ]
 
-at document body appendChild, call [ get toolbar ]
-
-at [ get toolbar ] classList add, call [
- set rules '
-  & {
-   background-color: #797979;
-   display: flex;
-   flex-direction: row;
-   height: 60px;
-  }
- '
- get style, point
+set element [
+ function tagName [
+  at [ get document ] createElement, call [
+   get tagName, default div
+  ]
+ ]
 ]
+
+at [ load ./lib/toolbar.cr ], point

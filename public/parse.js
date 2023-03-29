@@ -42,6 +42,9 @@ const INITIAL = {
   control.statement = []
  },
  ']'(control) {
+  if (control.stack.length <= 1) {
+   throw new Error('Unexpected ] character')
+  }
   control.queueToStatement()
   control.statementToBlock()
   control.stack.pop()
@@ -99,9 +102,15 @@ module.exports = function parse(source) {
  for (const charIndex in source) {
   const char = source[charIndex]
   if (char in state) {
-   const newState = state[char](control)
-   if (newState) {
-    state = newState
+   try {
+    const newState = state[char](control)
+    if (newState) {
+     state = newState
+    }
+   }
+   catch (e) {
+    e.message = e.message + ` (at ${charIndex}, '${source.substring(charIndex, charIndex + 20)}')`
+    throw e
    }
    control.beginAtIndex = charIndex
   }

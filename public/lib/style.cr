@@ -1,7 +1,11 @@
-set styleUnique [ add 1 [ get styleUnique, default -1 ]]
+set [ get styleUnique ] current [
+ add 1 [
+  get styleUnique current, default -1
+ ]
+]
 
 set className [
- template %0-%1 foo [ get styleUnique ]
+ template %0-%1 [ get name, default class ] [ get styleUnique current ]
 ]
 
 set styleElement [

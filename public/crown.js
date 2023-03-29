@@ -174,17 +174,17 @@ function crown(
    }
    return me
   },
-  call(...argumentCrowns) {
+  async call(...argumentCrowns) {
    if (typeof currentValue !== 'function') {
     throw new Error(
      `Expecting value to be a function, but got: ${typeof currentValue}`
     )
    }
-   currentValue = currentValue(
+   currentValue = uncrown(await currentValue(
     ...argumentCrowns.map((x) =>
      x === me ? x : uncrown(x)
     )
-   )
+   ))
    return me
   },
   clone() {
@@ -238,7 +238,7 @@ function crown(
    }
    return me
   },
-  get(name) {
+  get(name, ...nameSegments) {
    let searchScope = names
    while (searchScope.has(SCOPE.PARENT)) {
     if (searchScope.has(name)) {
@@ -253,6 +253,18 @@ function crown(
     // throw new Error(`name ${JSON.stringify(name)} is not set`)
    }
    currentValue = searchScope.get(name)
+   for (const segment of nameSegments) {
+    if (typeof currentValue === 'undefined' || currentValue === null || !(segment in currentValue)) {
+     currentValue = undefined
+     break
+    }
+    if (typeof currentValue[segment] === 'function') {
+     currentValue = currentValue[segment].bind(currentValue)
+    }
+    else {
+     currentValue = currentValue[segment]
+    }
+   }
    return me
   },
   async load(filePath) {
@@ -268,9 +280,9 @@ function crown(
        const fileModule = eval(`(
         function () {
          return async function ${filePath.replace(
-          /[^a-zA-Z]+/g,
-          '_'
-         )} (scope) {
+        /[^a-zA-Z]+/g,
+        '_'
+       )} (scope) {
          await scope.walk(${JSON.stringify(code)})
          return scope
         }})()`)
@@ -285,7 +297,7 @@ function crown(
   log(...values) {
    console.log(...values.map(uncrown))
   },
-  async object(definition) {
+  async object(definition = []) {
    currentValue = {}
    for (const [[[k, v]]] of definition) {
     const scope = me.clone()
@@ -439,15 +451,30 @@ function crown(
       prepend: false,
       true: false,
      }[command] ?? true
-    await me[command](
-     ...(await Promise.all(
+    try {
+     const finalArguments = await Promise.all(
       arguments.map((x) =>
        automaticWalk && Array.isArray(x)
         ? me.clone().walk(crown(x))
         : x
       )
-     ))
-    )
+     )
+     try {
+      await me[command](...finalArguments)
+     }
+     catch (e) {
+      console.error(`Error in ${command}`, finalArguments)
+      console.error('Current value', currentValue)
+      console.error(e)
+      throw e
+     }
+    }
+    catch (e) {
+     console.error(`Error computing arguments for ${command}`, arguments)
+     console.error('Current value', currentValue)
+     console.error(e)
+     throw e
+    }
    }
    return me
   },
