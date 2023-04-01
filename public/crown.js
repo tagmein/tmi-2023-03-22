@@ -267,7 +267,8 @@ function crown(
    }
    return me
   },
-  async load(filePath) {
+  async load(_filePath) {
+   const filePath = uncrown(_filePath)
    await new Promise(function (resolve, reject) {
     fs.readFile(
      path.join(basePath, filePath),

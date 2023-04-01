@@ -33,17 +33,11 @@ set route [
    get location hash,
    at substring, call 1
   ]
-  set response [
-   at [ get fetch ], call [
-    template %0?path=%1 /content [
-     at [ get encode ], call [ get hash ]
-    ]
+  at [ load [
+   template %0?path=%1 content [
+    at [ get encode ], call [ get hash ]
    ]
-  ]
-  set responseText [
-   at [ get response ] text, call
-  ]
-  log [ get responseText ]
+  ] ], point
  ]
 ]
 
