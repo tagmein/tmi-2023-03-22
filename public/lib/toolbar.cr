@@ -2,34 +2,27 @@ set toolbar [
  at [ get element ], call
 ]
 
-set channelSelect [
- at [ get element ], call
-]
-
-set channelSelectLabel [
- at [ get element ], call
-]
-
-set channelSelectHidden [
- at [ get element ], call select
-]
-
 at [ get toolbar ] classList add, call [
  set name toolbar
  set rules '
   & {
-   background-color: #797979;
-   color: #c9c9c9;
+   background-color: #595959;
+   color: #dfdfdf;
    display: flex;
    flex-direction: row;
+   font-weight: bold;
    height: 60px;
-   line-height: 40px;
+   line-height: 44px;
    overflow-x: auto;
    overflow-y: hidden;
    width: 100%;
   }
  '
  get style, point
+]
+
+set channelSelect [
+ at [ get element ], call
 ]
 
 at [ get channelSelect ] classList add, call [
@@ -45,6 +38,10 @@ at [ get channelSelect ] classList add, call [
  get style, point
 ]
 
+set channelSelectLabel [
+ at [ get element ], call
+]
+
 at [ get channelSelectLabel ] classList add, call [
  set name channelSelectLabel
  set rules '
@@ -53,6 +50,10 @@ at [ get channelSelectLabel ] classList add, call [
   }
  '
  get style, point
+]
+
+set channelSelectHidden [
+ at [ get element ], call select
 ]
 
 at [ get channelSelectHidden ] classList add, call [

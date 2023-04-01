@@ -2,13 +2,22 @@ at [ get document ] body classList add, call [
  set name body
  set rules '
   & {
-   background-color: #c9c9c9;
-   color: #202020;
+   background-color: #454545;
+   color: #a9a9a9;
+   display: flex;
+   flex-direction: column;
+   height: 100%;
+   margin: 0;
+  }
+
+  html {
+    height: 100vh;
   }
   
   body, input, select, textarea, button {
    font-family: Seravek, "Gill Sans Nova", Ubuntu, Calibri, "DejaVu Sans", source-sans-pro, sans-serif;
-   font-size: 18px;
+   font-size: 24px;
+   line-height: 1.8;
   }
 
   a {
@@ -17,8 +26,8 @@ at [ get document ] body classList add, call [
   }
 
   :focus {
-   outline: none;
    box-shadow: inset 0 0 0 2px #797979;
+   outline: none;
   }
 
   *::selection {
@@ -28,3 +37,5 @@ at [ get document ] body classList add, call [
  '
  get style, point
 ]
+
+at [ get document ] body removeAttribute, call style
