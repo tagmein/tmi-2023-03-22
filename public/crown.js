@@ -1,7 +1,9 @@
 const globalBasePath =
- typeof __dirname === 'string'
-  ? __dirname
-  : location.pathname.replace(/\/$/, '')
+ typeof location === 'object' && location.pathname === 'srcdoc'
+  ? ''
+  : typeof __dirname === 'string'
+   ? __dirname
+   : location.pathname.replace(/\/$/, '')
 
 let fs, path, parse
 
@@ -213,6 +215,19 @@ function crown(
   do() {
    return me
   },
+  async each(...argumentCrowns) {
+   const args = argumentCrowns.map(uncrown)
+   const [array, callback] = args
+   const currentValue = []
+   for (let index = 0; index < array.length; index++) {
+    currentValue.push(await callback(array[index], index))
+   }
+   return me
+  },
+  async is(argumentCrown) {
+   const arg = uncrown(argumentCrown)
+   currentValue = currentValue === arg
+  },
   async false(instructionCrown) {
    if (!currentValue) {
     await me
@@ -267,6 +282,21 @@ function crown(
    }
    return me
   },
+  async list(definition = []) {
+   currentValue = []
+   for (const [v] of definition) {
+    if (Array.isArray(v)) {
+     const scope = me.clone()
+     currentValue.push(
+      (await scope.walk(v)).current()
+     )
+    }
+    else {
+     currentValue.push(v)
+    }
+   }
+   return me
+  },
   async load(_filePath) {
    const filePath = uncrown(_filePath)
    await new Promise(function (resolve, reject) {
@@ -300,11 +330,14 @@ function crown(
   },
   async object(definition = []) {
    currentValue = {}
-   for (const [[[k, v]]] of definition) {
-    const scope = me.clone()
-    currentValue[k] = Array.isArray(v)
-     ? (await scope.walk(v)).current()
-     : v
+   for (const [k, v] of definition) {
+    if (Array.isArray(v)) {
+     const scope = me.clone()
+     currentValue[k] = (await scope.walk(v)).current()
+    }
+    else {
+     currentValue[k] = v
+    }
    }
    return me
   },
@@ -328,6 +361,11 @@ function crown(
     ].concat(rest)
     await me.walk(compound)
    }
+   return me
+  },
+  regexp(...argumentCrowns) {
+   const [definition, flags] = argumentCrowns.map(uncrown)
+   currentValue = new RegExp(definition, flags)
    return me
   },
   async run([source]) {
@@ -448,6 +486,7 @@ function crown(
      {
       false: false,
       function: false,
+      list: false,
       object: false,
       prepend: false,
       true: false,

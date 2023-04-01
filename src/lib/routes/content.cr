@@ -1,10 +1,24 @@
 set [ get response ] statusCode 200
-do [
- at [ get response ]
- do [ at setHeader, call Content-Type [ get plainText ] ]
- do [ at end, call [
-  template %0"%1" 'log hello from content.cr - path is ' [
-   get requestParams path
+at [ get response ]
+do [ at setHeader, call Content-Type application/json ]
+set responseString [
+ at [ get JSON ] stringify, call [
+  object [
+   value test
+   channels [
+    list [
+     [ object [ key tagmein, label 'Tag Me In' ] ]
+     [ object [ key foobar, label 'Foo Bar' ] ]
+    ]
+   ]
+   nodes [
+    list [
+     hello
+     world
+     abc
+    ]
+   ]
   ]
- ] ]
+ ]
 ]
+do [ at end, call [ get responseString ] ]

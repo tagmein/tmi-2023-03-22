@@ -13,7 +13,9 @@ set styleElement [
 ]
 
 set [ get styleElement ] innerText [
- at [ get rules ] replace, call & [
+ at [ get rules ] replace, call [
+  regexp & g
+ ] [
   template .%0 [ get className ]
  ]
 ]

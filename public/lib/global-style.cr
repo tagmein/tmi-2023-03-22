@@ -3,7 +3,6 @@ at [ get document ] body classList add, call [
  set rules '
   & {
    background-color: #454545;
-   color: #a9a9a9;
    display: flex;
    flex-direction: column;
    height: 100%;
@@ -15,6 +14,7 @@ at [ get document ] body classList add, call [
   }
   
   body, input, select, textarea, button {
+   color: #a9a9a9;
    font-family: Seravek, "Gill Sans Nova", Ubuntu, Calibri, "DejaVu Sans", source-sans-pro, sans-serif;
    font-size: 24px;
    line-height: 1.8;
@@ -25,8 +25,8 @@ at [ get document ] body classList add, call [
    text-decoration: none;
   }
 
-  :focus {
-   box-shadow: inset 0 0 0 2px #797979;
+  *:focus {
+   box-shadow: inset 0 0 0 4px #797979;
    outline: none;
   }
 

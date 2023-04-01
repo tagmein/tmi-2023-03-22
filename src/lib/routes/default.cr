@@ -1,16 +1,16 @@
 set contentTypes [
  object [
-  [cr   text/plain]
-  [css  text/css]
-  [gif  image/gif]
-  [html text/html]
-  [jpeg image/jpeg]
-  [jpg  image/jpeg]
-  [js   application/javascript]
-  [json application/json]
-  [png  image/png]
-  [svg  image/svg+xml]
-  [txt  text/plain]
+  cr   text/plain
+  css  text/css
+  gif  image/gif
+  html text/html
+  jpeg image/jpeg
+  jpg  image/jpeg
+  js   application/javascript
+  json application/json
+  png  image/png
+  svg  image/svg+xml
+  txt  text/plain
  ]
 ]
 

@@ -1,6 +1,7 @@
 set document [ at document ]
 set encode   [ at encodeURIComponent ]
 set fetch    [ at fetch ]
+set JSON     [ at JSON ]
 set listen   [ at addEventListener ]
 set location [ at location ]
 
@@ -24,20 +25,67 @@ set element [
  ]
 ]
 
-at [ load ./lib/toolbar.cr ], point
-at [ load ./lib/surface.cr ], point
+set getChannel [
+ function [
+  at [
+   at [ get location ] hash substring, call 1
+   at split, call /
+  ] 0
+ ]
+]
+
+set switchChannel [
+ function newChannel [
+  set segments [
+   at [ get location ] hash split, call /
+  ]
+  set [ get segments ] 0 [ get newChannel ]
+  set [ get location ] hash [
+   at [ get segments ] join, call /
+  ]
+ ]
+]
+
+set toolbar [
+ at [ load ./lib/toolbar.cr ], point
+]
+
+set surface [
+ at [ load ./lib/surface.cr ], point
+]
 
 set route [
  function [
-  set hash [
-   get location hash,
-   at substring, call 1
+  at [ get location ] hash length
+  false [
+   set [ get location ] hash tagmein
   ]
-  at [ load [
-   template %0?path=%1 content [
-    at [ get encode ], call [ get hash ]
+  true [
+   set hash [
+    get location hash,
+    at substring, call 1
    ]
-  ] ], point
+   set response [
+    at [ get fetch ], call [
+     template %0?path=%1 /content [
+      at [ get encode ], call [ get hash ]
+     ]
+    ]
+   ]
+   set responseData [
+    at [ get response ] json, call
+   ]
+   log [ get responseData ]
+   at [ get toolbar ] setChannels, call [
+    get responseData channels
+   ] [ at [ get getChannel ], call ]
+   at [ get surface ] setNodes, call [
+    get responseData nodes
+   ]
+   at [ get surface ] setValue, call [
+    get responseData value
+   ]
+  ]
  ]
 ]
 

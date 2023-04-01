@@ -1,5 +1,5 @@
-# todo - how else to pass global to sub context
 set require [ at require ]
+set JSON [ at JSON ]
 
 set querystring [
  at require, call querystring
@@ -35,9 +35,9 @@ set publicBase [
 # define routes
 set routes [
  object [
-  [ 'GET /'        [ load ./routes/index.cr ] ]
-  [ 'GET /hello'   [ load ./routes/hello.cr ] ]
-  [ 'GET /content' [ load ./routes/content.cr ] ]
+  'GET /'        [ load ./routes/index.cr ]
+  'GET /hello'   [ load ./routes/hello.cr ]
+  'GET /content' [ load ./routes/content.cr ]
  ]
 ]
 
