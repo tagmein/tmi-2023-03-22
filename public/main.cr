@@ -34,6 +34,15 @@ set getChannel [
  ]
 ]
 
+set getPathSegments [
+ function [
+  at [
+   at [ get location ] hash substring, call 1
+   at split, call /
+  ] slice, call 1
+ ]
+]
+
 set switchChannel [
  function newChannel [
   set segments [

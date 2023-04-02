@@ -2,6 +2,16 @@ const END = {
  name: 'end'
 }
 
+const COMMENT = {
+ name: 'comment',
+ "\n"(control) {
+  control.statement.push('#')
+  control.queueToStatement()
+  control.statementToBlock()
+  return INITIAL
+ }
+}
+
 const STRING = {
  name: 'string',
  "'"(control) {
@@ -28,6 +38,11 @@ const INITIAL = {
  ','(control) {
   control.queueToStatement()
   control.statementToBlock()
+ },
+ '#'(control) {
+  control.queueToStatement()
+  control.statementToBlock()
+  return COMMENT
  },
  "'"(control) {
   control.queueToStatement()

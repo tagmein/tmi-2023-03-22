@@ -107,12 +107,29 @@ function crown(
  names = new Map(),
  basePath = globalBasePath
 ) {
+ let currentError
  let currentValue = context
  let lastComment
  const me = {
   '#'(comment) {
    lastComment = comment
    return me
+  },
+  async '<'(argumentCrown) {
+   const arg = uncrown(argumentCrown)
+   currentValue = currentValue < arg
+  },
+  async '<='(argumentCrown) {
+   const arg = uncrown(argumentCrown)
+   currentValue = currentValue <= arg
+  },
+  async '>'(argumentCrown) {
+   const arg = uncrown(argumentCrown)
+   currentValue = currentValue > arg
+  },
+  async '>='(argumentCrown) {
+   const arg = uncrown(argumentCrown)
+   currentValue = currentValue >= arg
   },
   add(...argumentCrowns) {
    currentValue = argumentCrowns.reduce(
@@ -307,18 +324,25 @@ function crown(
       if (error) {
        reject(error)
       } else {
-       const code = parse(content)
-       const fileModule = eval(`(
-        function () {
-         return async function ${filePath.replace(
-        /[^a-zA-Z]+/g,
-        '_'
-       )} (scope) {
-         await scope.walk(${JSON.stringify(code)})
-         return scope
-        }})()`)
-       currentValue = fileModule
-       resolve()
+       try {
+        const code = parse(content)
+        const fileModule = eval(`(
+         function () {
+          return async function ${filePath.replace(
+         /[^a-zA-Z]+/g,
+         '_'
+        )} (scope) {
+          await scope.walk(${JSON.stringify(code)})
+          return scope
+         }})()`)
+        currentValue = fileModule
+        resolve()
+       }
+       catch (e) {
+        currentError = e
+        console.error(e)
+        reject(e)
+       }
       }
      }
     )
@@ -360,6 +384,16 @@ function crown(
      commands.concat(prefix),
     ].concat(rest)
     await me.walk(compound)
+   }
+   return me
+  },
+  async promise(handler) {
+   try {
+    currentValue = await new Promise(uncrown(handler))
+   }
+   catch (e) {
+    currentError = e
+    console.error('error in promise', e)
    }
    return me
   },
@@ -454,6 +488,10 @@ function crown(
    return me
   },
   async walk(instructionsCrown) {
+   if (currentError) {
+    console.log('will not walk due to error')
+    return me
+   }
    const instructions = uncrown(instructionsCrown)
    if (!Array.isArray(instructions)) {
     throw new Error(
@@ -469,6 +507,10 @@ function crown(
     ? instructions
     : [instructions]
    for (const statementIndex in wrappedInstructions) {
+    if (currentError) {
+     console.log('stop walk due to error')
+     break
+    }
     const statement =
      wrappedInstructions[statementIndex]
     if (!Array.isArray(statement)) {
@@ -503,6 +545,7 @@ function crown(
       await me[command](...finalArguments)
      }
      catch (e) {
+      currentError = e
       console.error(`Error in ${command}`, finalArguments)
       console.error('Current value', currentValue)
       console.error(e)
@@ -510,6 +553,7 @@ function crown(
      }
     }
     catch (e) {
+     currentError = e
      console.error(`Error computing arguments for ${command}`, arguments)
      console.error('Current value', currentValue)
      console.error(e)

@@ -34,15 +34,36 @@ at [ get nodeList ] classList add, call [
 
   & a {
    border-bottom: 1px solid #676767;
+   box-sizing: border-box;
    display block;
    font-size: 18px;
    line-height: 2;
+   min-height: 47px;
    padding: 5px 15px;
+   position: relative;
    word-wrap: break-word;
   }
 
+  & a[data-parent="true"] {
+   padding-right: 40px;
+  }
+
+  & a[data-parent="true"]::after {
+   content: "\00AB";
+   display: block;
+   font-size: 28px;
+   position: absolute;
+   right: 15px;
+   top: -5px;
+   transform: rotate(90deg);
+  }
+
   & a:hover {
-   background-color: #676767;
+   background-color: #565656;
+  }
+
+  & a[data-parent="true"] + a[data-child="true"] {
+   border-top: 3px solid #676767;
   }
  '
  get style, point
@@ -136,19 +157,40 @@ object [
  setNodes [
   function nodes [
    set [ get nodeList ] innerHTML ''
+   set segments [ get getPathSegments, call ]
+   each [ get segments ] [
+    function segment index [
+     set parentLink [
+      at [ get element ], call a
+     ]
+     at [ get parentLink ] setAttribute, call data-parent true
+     set [ get parentLink ] href [
+      template '/#%0/%1' [
+       get getChannel, call
+      ] [
+       at [ get segments ] slice, call 0 [ get index ]
+       at join, call /
+      ]
+      at replace, call [ regexp /$ ] ''
+     ]
+     set [ get parentLink ] innerText [ get segment ]
+     at [ get build ], call [ get nodeList ] [ get parentLink ]
+    ]
+   ]
    each [ get nodes ] [
     function node [
      set nodeLink [
       at [ get element ], call a
      ]
+     at [ get nodeLink ] setAttribute, call data-child true
      set [ get nodeLink ] href [
-      template %0/%1 [ get location hash ] [
+      template /%0/%1 [
+       get location hash
+      ] [
        at [ get encode ], call [ get node ]
       ]
      ]
-     set [ get nodeLink ] innerText [
-      get node
-     ]
+     set [ get nodeLink ] innerText [ get node ]
      at [ get build ], call [ get nodeList ] [ get nodeLink ]
     ]
    ]

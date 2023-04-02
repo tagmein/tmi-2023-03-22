@@ -1,5 +1,8 @@
 set require [ at require ]
+set Buffer [ at Buffer ]
 set JSON [ at JSON ]
+set path [ at require, call path ]
+set fileSystem [ at require, call fs ]
 
 set querystring [
  at require, call querystring
@@ -22,9 +25,6 @@ set port [
  default 3456
 ]
 
-# load path module
-set path [ at require, call path ]
-
 # define base public path
 set publicBase [
  set root [ at __dirname ]
@@ -35,15 +35,22 @@ set publicBase [
 # define routes
 set routes [
  object [
-  'GET /'        [ load ./routes/index.cr ]
-  'GET /hello'   [ load ./routes/hello.cr ]
-  'GET /content' [ load ./routes/content.cr ]
+  'GET /'               [ load ./routes/index.cr ]
+  'GET /hello'          [ load ./routes/hello.cr ]
+  'GET /content'        [ load ./routes/content.cr ]
+  'POST /content/new'   [ load ./routes/create-node.cr ]
+  'POST /content/write' [ load ./routes/write-node-value.cr ]
  ]
 ]
 
 # load default request handler
 set defaultRequestHandler [
  load ./routes/default.cr
+]
+
+# load JSON body parser
+set parseRequestBody [
+ load ./parse-request-body.cr, point
 ]
 
 # create request handler
@@ -64,7 +71,14 @@ set agent [
    get querystring parse,
    call [ get splitUrl 1 ]
   ]
+
   log [ get requestMethod ] [ get requestUrl ]
+
+  set requestBody [
+   get parseRequestBody, call [ get request ]
+  ]
+
+  log [ get requestBody ]
 
   set requestKey [
    template '%0 %1' [ get requestMethod ] [ get requestPath ]

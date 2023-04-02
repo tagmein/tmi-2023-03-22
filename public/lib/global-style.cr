@@ -14,7 +14,7 @@ at [ get document ] body classList add, call [
   }
   
   body, input, select, textarea, button {
-   color: #a9a9a9;
+   color: #b0b0b0;
    font-family: Seravek, "Gill Sans Nova", Ubuntu, Calibri, "DejaVu Sans", source-sans-pro, sans-serif;
    font-size: 24px;
    line-height: 1.8;
