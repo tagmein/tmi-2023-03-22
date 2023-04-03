@@ -1,0 +1,14 @@
+
+Accounts
+- register 
+- sign in
+- sign out
+
+API
+- create channel
+- permissions
+
+Interface
+- error message if couldn't save
+- saving indicator while saving
+- loading indicator while loading
