@@ -9,6 +9,7 @@ set location     [ at location ]
 set setTimeout   [ at setTimeout ]
 
 set debounce [ load ./lib/debounce.cr, point ]
+set tmiMessageBus [ load ./lib/tmi-message-bus.cr, point ]
 set styleUnique [ object ]
 set style [ load ./lib/style.cr ]
 
@@ -88,7 +89,6 @@ set route [
    set responseData [
     at [ get response ] json, call
    ]
-   log [ get responseData ]
    at [ get toolbar ] setChannels, call [
     get responseData channels
    ] [ at [ get getChannel ], call ]
@@ -104,3 +104,5 @@ set route [
 
 at [ get listen ], call hashchange [ get route ]
 at [ get route ], call
+
+at [ get listen ], call message [ get tmiMessageBus ]

@@ -1,0 +1,16 @@
+set self [ at self ]
+set top [ at top ]
+
+set tmiClient [
+ load /tmi-client.cr, point
+ call [ get self ] [ get top ]
+]
+
+set account [
+ at [ get tmiClient ]
+ call getAccount
+]
+
+log account information is [
+ get account
+]

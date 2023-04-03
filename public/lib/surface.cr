@@ -147,12 +147,12 @@ set renderPreview [
 </body>
 
 </html>' [
-      at [ get JSON ] stringify, call [
-       at [ get valueEditor value ] substring,
-       call 1
-      ]
+     at [ get JSON ] stringify, call [
+      at [ get valueEditor value ] substring,
+      call 1
      ]
     ]
+   ]
   ]
   false [
    at [
@@ -171,6 +171,9 @@ set renderPreview [
 <head>
  <meta charset="utf-8" />
  <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <script>
+  globalThis.basePath = %0
+ </script>
  <script type="text/javascript" src="/crown.js"></script>
 </head>
 
@@ -179,13 +182,17 @@ set renderPreview [
  <script type="text/javascript">
   async function main() {
    await loadCrownDependencies()
-   await crown().run([%0])
+   await crown().run([%1])
   }
   main().catch(e => console.error(e))
  </script>
 </body>
 
 </html>' [
+      at [ get JSON ] stringify, call [
+       at [ get location ] origin
+      ]
+     ] [
       at [ get JSON ] stringify, call [
        get valueEditor value
       ]
@@ -229,7 +236,6 @@ set saveEditorChanges [
   set responseData [
    at [ get response ] json, call
   ]
-  log [ get responseData ]
  ]
 ]
 
@@ -378,7 +384,6 @@ set createNewNode [
   set responseData [
    at [ get response ] json, call
   ]
-  log [ get responseData ]
   get responseData success, true [
    set [ get newNodeInput ] value ''
   ]

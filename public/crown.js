@@ -1,9 +1,9 @@
-const globalBasePath =
+const globalBasePath = globalThis.basePath ?? (
  typeof location === 'object' && location.pathname === 'srcdoc'
   ? ''
   : typeof __dirname === 'string'
    ? __dirname
-   : location.pathname.replace(/\/$/, '')
+   : location.pathname.replace(/\/$/, ''))
 
 let fs, path, parse
 
@@ -95,9 +95,7 @@ const SCOPE = {
 }
 
 function uncrown(value) {
- return typeof value === 'object' &&
-  value !== null &&
-  'current' in value
+ return typeof value?.current === 'function'
   ? value.current()
   : value
 }
@@ -444,7 +442,8 @@ function crown(
      .call(crown().value(source))
    )
   },
-  set(...path) {
+  set(...pathCrowns) {
+   const path = pathCrowns.map(uncrown)
    const value = path.pop()
    const name = path.pop()
    if (path.length) {
@@ -493,6 +492,27 @@ function crown(
      .clone()
      .walk(uncrown(instructionCrown))
    }
+  },
+  unset(...pathCrowns) {
+   const path = pathCrowns.map(uncrown)
+   const name = path.pop()
+   if (path.length) {
+    const context = uncrown(me.at(...path))
+    if (context === 'null') {
+     throw new Error(
+      `cannot unset property "${name}" of null`
+     )
+    }
+    if (typeof context !== 'object') {
+     throw new Error(
+      `cannot unset property "${name}" of ${typeof context}`
+     )
+    }
+    delete context[name]
+   } else {
+    names.delete(name)
+   }
+   return me
   },
   value(newValue) {
    currentValue = newValue
