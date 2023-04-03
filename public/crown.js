@@ -149,13 +149,15 @@ function crown(
        `cannot read '${segment}' of ${currentValue}`
       )
      }
-     const test =
-      typeof currentValue === 'object'
-       ? currentValue
-       : Object.getPrototypeOf(currentValue)
+     const test = (
+      typeof currentValue === 'object' ||
+      typeof currentValue === 'function')
+      ? currentValue
+      : Object.getPrototypeOf(currentValue)
      if (segment in test) {
       const nextValue = currentValue[segment]
-      if (typeof nextValue === 'function') {
+      if (typeof nextValue === 'function' &&
+       currentValue !== globalThis) {
        currentValue =
         currentValue[segment].bind(currentValue)
       } else {
@@ -286,15 +288,24 @@ function crown(
    }
    currentValue = searchScope.get(name)
    for (const segment of nameSegments) {
-    if (typeof currentValue === 'undefined' || currentValue === null || !(segment in currentValue)) {
-     currentValue = undefined
-     break
+    if (typeof currentValue === 'undefined' || currentValue === null) {
+     throw new Error(`cannot get '${segment}' of ${currentValue}`)
     }
-    if (typeof currentValue[segment] === 'function') {
-     currentValue = currentValue[segment].bind(currentValue)
+    const test = (
+     typeof currentValue === 'object' ||
+     typeof currentValue === 'string' ||
+     typeof currentValue === 'function')
+     ? currentValue
+     : Object.getPrototypeOf(currentValue)
+    if (!test.hasOwnProperty?.(segment) && !(segment in test)) {
+     currentValue = undefined
+     continue
+    }
+    if (typeof test[segment] === 'function') {
+     currentValue = test[segment].bind(currentValue)
     }
     else {
-     currentValue = currentValue[segment]
+     currentValue = test[segment]
     }
    }
    return me

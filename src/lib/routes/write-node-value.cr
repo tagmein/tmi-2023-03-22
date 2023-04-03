@@ -45,7 +45,8 @@ set responseString [
  at [ get JSON ] stringify, call [
   object [
    success [
-    at [ get writeValue ], call [ get searchPath ] [ get requestBody]
+    at [ get writeValue ]
+    call [ get searchPath ] [ get requestBody value ]
    ]
   ]
  ]

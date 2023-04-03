@@ -23,16 +23,18 @@ at [ get nodeList ] classList add, call [
  set name nodeList
  set rules '
   & {
+   background-color: #3c3c3c;
    display: flex;
    flex-direction: column;
    flex-shrink: 0;
    max-width: 100vw;
    overflow-x: hidden;
    overflow-y: auto;
-   width: 200px;
+   width: 240px;
   }
 
   & a {
+   background-color: #454545;
    border-bottom: 1px solid #676767;
    box-sizing: border-box;
    display block;
@@ -113,8 +115,57 @@ at [ get previewFrame ] classList add, call [
 
 set renderPreview [
  function [
-  set [ get previewFrame ] srcdoc [
-   template '<!doctype html>
+  at [
+   get valueEditor value
+  ] startsWith, call '
+'
+  true [
+   set [ get previewFrame ] srcdoc [
+     template '<!doctype html>
+<html>
+
+<head>
+ <meta charset="utf-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <style>
+  #textContent {
+   color: #f0f0f0;
+   font-family: inherit;
+   font-size: 18px;
+   margin: 0;
+   white-space: pre-wrap;
+  }
+ </style>
+</head>
+
+<body>
+ <div id="textContent"></div>
+ <noscript>JavaScript is required</noscript>
+ <script type="text/javascript">
+  document.getElementById("textContent").innerText = %0
+ </script>
+</body>
+
+</html>' [
+      at [ get JSON ] stringify, call [
+       at [ get valueEditor value ] substring,
+       call 1
+      ]
+     ]
+    ]
+  ]
+  false [
+   at [
+    get valueEditor value
+   ] startsWith, call <
+   true [
+    set [ get previewFrame ] srcdoc [
+     get valueEditor value
+    ]
+   ]
+   false [
+    set [ get previewFrame ] srcdoc [
+     template '<!doctype html>
 <html>
 
 <head>
@@ -135,16 +186,70 @@ set renderPreview [
 </body>
 
 </html>' [
-    at [ get JSON ] stringify, call [
-     get valueEditor value
+      at [ get JSON ] stringify, call [
+       get valueEditor value
+      ]
+     ]
     ]
    ]
   ]
  ]
 ]
 
-at [ get valueEditor ] addEventListener, call keyup [
- get renderPreview
+set saveEditorChanges [
+ function [
+  set hash [
+   get location hash,
+   at substring, call 1
+  ]
+  set requestBody [
+   at [ get JSON ] stringify, call [
+    object [
+     value [ get valueEditor value ]
+    ]
+   ]
+  ]
+  set response [
+   at [ get fetch ], call [
+    template %0?path=%1 /content [
+     at [ get encode ], call [ get hash ]
+    ]
+   ] [
+    object [
+     method POST
+     headers [
+      object [
+       Content-Type application/json
+      ]
+     ]
+     body [ get requestBody ]
+    ]
+   ]
+  ]
+  set responseData [
+   at [ get response ] json, call
+  ]
+  log [ get responseData ]
+ ]
+]
+
+set renderPreviewDebounced [
+ get debounce, call [ get renderPreview ] 250
+]
+
+set saveEditorChangesDebounced [
+ get debounce, call [ get saveEditorChanges ]
+]
+
+each [ list [ change, keyup ] ] [
+ function eventType [
+  at [ get valueEditor ] addEventListener, call [ get eventType ] [
+   function [
+    get renderPreviewDebounced, call
+    get saveEditorChangesDebounced, call
+   ]
+  ]
+ ]
 ]
 
 at [ get build ]
@@ -152,6 +257,149 @@ do [ call [ get document body ] [ get surface ] ]
 do [ call [ get surface ] [ get nodeList ] ]
 do [ call [ get surface ] [ get valueEditor ] ]
 do [ call [ get surface ] [ get previewFrame ] ]
+
+set newNodeContainer [
+ at [ get element ], call div
+]
+
+at [ get newNodeContainer ] classList add, call [
+ set name newNodeContainer
+ set rules '
+  & {
+   background-color: #3c3c3c;
+   display: flex;
+   justify-content: center;
+   padding: 10px;
+  }
+ '
+ get style, point
+]
+
+set newNodeContainer [
+ at [ get element ], call div
+]
+
+at [ get newNodeContainer ] classList add, call [
+ set name newNodeContainer
+ set rules '
+  & {
+   display: flex;
+   justify-content: center;
+   padding: 10px;
+  }
+ '
+ get style, point
+]
+
+set newNodeInput [
+ at [ get element ], call input
+]
+
+at [ get newNodeInput ] classList add, call [
+ set name newNodeInput
+ set rules '
+  & {
+   background-color: #5c5c5c;
+   border: none;
+   border-radius: 4px;
+   color: #e9e9e9;
+   font-size: 18px;
+   padding: 5px 10px;
+   outline: none;
+   width: 100%;
+  }
+
+  &::placeholder {
+   color: #9c9c9c;
+  }
+ '
+ get style, point
+]
+
+at [ get newNodeInput ] setAttribute, call placeholder 'New item name'
+
+set createButton [
+ at [ get element ], call button
+]
+
+at [ get createButton ] classList add, call [
+ set name createButton
+ set rules '
+  & {
+   background-color: #3c3c3c;
+   border: none;
+   border-radius: 4px;
+   color: #e9e9e9;
+   cursor: pointer;
+   font-size: 18px;
+   margin-left: 10px;
+   padding: 5px 10px;
+  }
+
+  &:hover {
+   background-color: #565656;
+  }
+ '
+ get style, point
+]
+
+set [ get createButton ] innerText Create
+
+set createNewNode [
+ function nodeName [
+  set hash [
+   get location hash,
+   at substring, call 1
+  ]
+  set requestBody [
+   at [ get JSON ] stringify, call [
+    object [
+     name [ get nodeName ]
+    ]
+   ]
+  ]
+  set response [
+   at [ get fetch ], call [
+    template %0?path=%1 /content/new [
+     at [ get encode ], call [ get hash ]
+    ]
+   ] [
+    object [
+     method POST
+     headers [
+      object [
+       Content-Type application/json
+      ]
+     ]
+     body [ get requestBody ]
+    ]
+   ]
+  ]
+  set responseData [
+   at [ get response ] json, call
+  ]
+  log [ get responseData ]
+  get responseData success, true [
+   set [ get newNodeInput ] value ''
+  ]
+  at [ get route ], call
+ ]
+]
+
+at [ get createButton ] addEventListener, call click [
+ function [
+  get newNodeInput value length, is 0, true [
+   at [ get alert ], call 'Name cannot be empty'
+  ], false [
+   at [ get createNewNode ], call [
+    get newNodeInput value
+   ]
+  ]
+ ]
+]
+
+at [ get build ], call [ get newNodeContainer ] [ get newNodeInput ]
+at [ get build ], call [ get newNodeContainer ] [ get createButton ]
 
 object [
  setNodes [
@@ -194,6 +442,7 @@ object [
      at [ get build ], call [ get nodeList ] [ get nodeLink ]
     ]
    ]
+   at [ get build ], call [ get nodeList ] [ get newNodeContainer ]
   ]
  ]
  setValue [

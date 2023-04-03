@@ -39,7 +39,7 @@ set routes [
   'GET /hello'          [ load ./routes/hello.cr ]
   'GET /content'        [ load ./routes/content.cr ]
   'POST /content/new'   [ load ./routes/create-node.cr ]
-  'POST /content/write' [ load ./routes/write-node-value.cr ]
+  'POST /content'       [ load ./routes/write-node-value.cr ]
  ]
 ]
 

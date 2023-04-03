@@ -1,0 +1,30 @@
+<!doctype html>
+<style>
+ body { margin: 0; }
+ input {
+  border: none;
+  box-sizing: border-box;
+  font-size: 24px;
+  padding: 24px;
+  width: 100%;
+ }
+ input[readonly] {
+  background-color: #d0d0d0;
+ }
+</style>
+<input id="expression">
+<input id="output" readonly>
+<script>
+ const output =
+  document.getElementById('output')
+ const expr =
+  document.getElementById('expression')
+ expr.addEventListener('keyup', () => {
+   try {
+    output.value = eval(expr.value)
+   }
+   catch (e) {
+    output.value = e.message
+   }
+  })
+</script>
