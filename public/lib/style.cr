@@ -12,7 +12,7 @@ set styleElement [
  at [ get document ] createElement, call style
 ]
 
-set [ get styleElement ] innerText [
+set [ get styleElement ] textContent [
  at [ get rules ] replace, call [
   regexp & g
  ] [

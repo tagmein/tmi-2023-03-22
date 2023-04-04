@@ -100,12 +100,12 @@ object [
       at [ get element ], call option
      ]
      set [ get option ] value [ get channel key ]
-     set [ get option ] innerText [ get channel label ]
+     set [ get option ] textContent [ get channel label ]
      do [
       get selectedChannel, is [ get option value ]
       true [
        set [ get option ] selected true
-       set [ get channelSelectLabel ] innerText [ get channel label ]
+       set [ get channelSelectLabel ] textContent [ get channel label ]
       ]
      ]
      at [ get build ], call [ get channelSelectHidden ] [ get option ]

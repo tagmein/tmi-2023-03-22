@@ -23,7 +23,7 @@ at [ get nodeList ] classList add, call [
  set name nodeList
  set rules '
   & {
-   background-color: #3c3c3c;
+   background-color: #343434;
    display: flex;
    flex-direction: column;
    flex-shrink: 0;
@@ -34,8 +34,6 @@ at [ get nodeList ] classList add, call [
   }
 
   & a {
-   background-color: #454545;
-   border-bottom: 1px solid #676767;
    box-sizing: border-box;
    display block;
    font-size: 18px;
@@ -46,8 +44,18 @@ at [ get nodeList ] classList add, call [
    word-wrap: break-word;
   }
 
+  & a[data-child="true"] {
+   border-bottom: 1px solid #454545;
+  }
+
   & a[data-parent="true"] {
+   background-color: #454545;
    padding-right: 40px;
+   border-bottom: 1px solid #676767;
+  }
+
+  & a[data-current="true"] {
+   font-weight: bold;
   }
 
   & a[data-parent="true"]::after {
@@ -62,10 +70,6 @@ at [ get nodeList ] classList add, call [
 
   & a:hover {
    background-color: #565656;
-  }
-
-  & a[data-parent="true"] + a[data-child="true"] {
-   border-top: 3px solid #676767;
   }
  '
  get style, point
@@ -142,7 +146,7 @@ set renderPreview [
  <div id="textContent"></div>
  <noscript>JavaScript is required</noscript>
  <script type="text/javascript">
-  document.getElementById("textContent").innerText = %0
+  document.getElementById("textContent").textContent = %0
  </script>
 </body>
 
@@ -219,7 +223,7 @@ set saveEditorChanges [
   set response [
    at [ get fetch ], call [
     template %0?path=%1 /content [
-     at [ get encode ], call [ get hash ]
+     get hash
     ]
    ] [
     object [
@@ -272,7 +276,7 @@ at [ get newNodeContainer ] classList add, call [
  set name newNodeContainer
  set rules '
   & {
-   background-color: #3c3c3c;
+   background-color: #343434;
    display: flex;
    justify-content: center;
    padding: 10px;
@@ -332,7 +336,7 @@ at [ get createButton ] classList add, call [
  set name createButton
  set rules '
   & {
-   background-color: #3c3c3c;
+   background-color: #343434;
    border: none;
    border-radius: 4px;
    color: #e9e9e9;
@@ -349,7 +353,7 @@ at [ get createButton ] classList add, call [
  get style, point
 ]
 
-set [ get createButton ] innerText Create
+set [ get createButton ] textContent Create
 
 set createNewNode [
  function nodeName [
@@ -367,7 +371,7 @@ set createNewNode [
   set response [
    at [ get fetch ], call [
     template %0?path=%1 /content/new [
-     at [ get encode ], call [ get hash ]
+     get hash
     ]
    ] [
     object [
@@ -417,6 +421,9 @@ object [
       at [ get element ], call a
      ]
      at [ get parentLink ] setAttribute, call data-parent true
+     get index, is [ add -1 [ get segments length ]], true [
+       at [ get parentLink ] setAttribute, call data-current true 
+     ]
      set [ get parentLink ] href [
       template '/#%0/%1' [
        get getChannel, call
@@ -426,7 +433,9 @@ object [
       ]
       at replace, call [ regexp /$ ] ''
      ]
-     set [ get parentLink ] innerText [ get segment ]
+     set [ get parentLink ] textContent [
+      at [ get decode ], call [ get segment ]
+     ]
      at [ get build ], call [ get nodeList ] [ get parentLink ]
     ]
    ]
@@ -443,7 +452,7 @@ object [
        at [ get encode ], call [ get node ]
       ]
      ]
-     set [ get nodeLink ] innerText [ get node ]
+     set [ get nodeLink ] textContent [ get node ]
      at [ get build ], call [ get nodeList ] [ get nodeLink ]
     ]
    ]

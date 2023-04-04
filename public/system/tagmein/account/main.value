@@ -14,3 +14,52 @@ set account [
 log account information is [
  get account
 ]
+
+set greeting [
+ at [ get self ] document createElement
+ call h3
+]
+
+at [ get self ] document body appendChild
+call [ get greeting ]
+
+set [ get greeting ] style color '#ffff00'
+
+set [ get greeting ] textContent [
+ template 'Hello, %0' [
+  get account name
+ ]
+]
+
+set termsLink [
+ at [ get self ] document createElement
+ call a
+]
+
+at [ get termsLink ]
+
+do [ 
+ at setAttribute
+ do [ call target _top ]
+ do [ call href '/#tagmein/terms of use']
+]
+
+set assign [
+ function target values [
+  at [ get self ] Object assign
+  call [ get target ] [ get values ]
+ ]
+]
+
+set [ current ] textContent 'Terms of service'
+
+set 'link color' '#00ffff'
+
+get assign, call [ get termsLink style ] [
+ object [
+  color [ get 'link color' ]
+ ]
+]
+
+at [ get self ] document body appendChild
+call [ get termsLink ]

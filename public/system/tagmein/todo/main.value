@@ -6,9 +6,28 @@ Accounts
 
 API
 - create channel
+- list all channels at path
 - permissions
 
+Nodes
+- rename
+- move
+- clone
+- copy to channel
+- delete
+
+Runtime
+- load relative CrownScript files with ./file.cr
+- plain text -> markdown
+
 Interface
+- show user account in top right
 - error message if couldn't save
 - saving indicator while saving
 - loading indicator while loading
+- enter to create new node
+- mobile view
+- launch full screen view in new tab
+
+Examples
+- todo app with permission request to read + write to ./data.json

@@ -1,5 +1,6 @@
 set alert        [ at alert ]
 set clearTimeout [ at clearTimeout ]
+set decode       [ at decodeURIComponent ]
 set document     [ at document ]
 set encode       [ at encodeURIComponent ]
 set fetch        [ at fetch ]
@@ -82,7 +83,7 @@ set route [
    set response [
     at [ get fetch ], call [
      template %0?path=%1 /content [
-      at [ get encode ], call [ get hash ]
+      get hash
      ]
     ]
    ]

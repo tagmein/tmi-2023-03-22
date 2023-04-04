@@ -16,6 +16,7 @@ set writeValue [
       ]
      ]
     ]
+    log saving to [ get mainFilePath ]
     at [ get fileSystem ] writeFile
     call [ get mainFilePath ] [ get value ] utf8 [ get writeFileCallback ]
    ]
