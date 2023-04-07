@@ -361,6 +361,10 @@ function crown(
   log(...values) {
    console.log(...values.map(uncrown))
   },
+  not() {
+    currentValue = !currentValue
+    return me
+  },
   async object(definition = []) {
    currentValue = {}
    for (const [k, v] of definition) {

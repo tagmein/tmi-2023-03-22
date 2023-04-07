@@ -24,6 +24,7 @@ at [ get nodeList ] classList add, call [
  set rules '
   & {
    background-color: #343434;
+   border-right: 1px solid #676767;
    display: flex;
    flex-direction: column;
    flex-shrink: 0;
@@ -85,9 +86,9 @@ at [ get valueEditor ] classList add, call [
   & {
    background: transparent;
    border: none;
-   border-left: 1px solid #676767;
    border-right: 1px solid #676767;
    color: #e9e9e9;
+   display: none;
    flex-shrink: 0;
    font-family: "Nimbus Mono PS", "Courier New", "Cutive Mono", monospace;
    font-size: 16px;
@@ -95,6 +96,10 @@ at [ get valueEditor ] classList add, call [
    padding: 10px 15px;
    resize: none;
    width: 400px;
+  }
+
+  body.show-editor & {
+   display: block;
   }
  '
  get style, point

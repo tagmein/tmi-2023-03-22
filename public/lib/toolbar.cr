@@ -21,6 +21,10 @@ at [ get toolbar ] classList add, call [
    width: 100%;
    z-index: 1;
   }
+
+  & > div {
+   border-right: 1px solid #676767;
+  }
  '
  get style, point
 ]
@@ -33,7 +37,6 @@ at [ get channelSelect ] classList add, call [
  set name channelSelect
  set rules '
   & {
-   border-right: 1px solid #676767;
    max-width: 100%;
    min-width: 60px;
    position: relative;
@@ -76,8 +79,40 @@ at [ get channelSelectHidden ] classList add, call [
  get style, point
 ]
 
+set updateBodyShowEditor [
+ function showEditor [
+  get showEditor
+  true [
+   at [ get body ] classList add, call show-editor
+  ]
+  false [
+   at [ get body ] classList remove, call show-editor
+  ]
+ ]
+]
+
+set initialShowEditor [
+ at [ get localStorage ] getItem, call showEditor
+ default 'true', is 'true'
+]
+
+at [ get updateBodyShowEditor ], call [ get initialShowEditor ]
+
+set editorToggle [
+ # todo: set basePath correctly for modules loaded in browser
+ load ./lib/components/toggle.cr, point, call 'Show editor' [
+  function editorEnabled [
+   at [ get localStorage ] setItem, call showEditor [
+    at [ get editorEnabled ] toString, call
+   ]
+   at [ get updateBodyShowEditor ], call [ get editorEnabled ]
+  ]
+ ] [ get initialShowEditor ]
+]
+
 at [ get build ]
 do [ call [ get toolbar ]       [ get channelSelect ] ]
+do [ call [ get toolbar ]       [ get editorToggle ] ]
 do [ call [ get channelSelect ] [ get channelSelectLabel ] ]
 do [ call [ get channelSelect ] [ get channelSelectHidden ] ]
 do [ call [ get document body ] [ get toolbar ] ]

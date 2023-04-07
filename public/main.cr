@@ -1,4 +1,5 @@
 set alert        [ at alert ]
+set body         [ at document body ]
 set clearTimeout [ at clearTimeout ]
 set decode       [ at decodeURIComponent ]
 set document     [ at document ]
@@ -6,6 +7,7 @@ set encode       [ at encodeURIComponent ]
 set fetch        [ at fetch ]
 set JSON         [ at JSON ]
 set listen       [ at addEventListener ]
+set localStorage [ at localStorage ]
 set location     [ at location ]
 set setTimeout   [ at setTimeout ]
 
