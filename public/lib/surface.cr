@@ -31,7 +31,7 @@ at [ get nodeList ] classList add, call [
    max-width: 100vw;
    overflow-x: hidden;
    overflow-y: auto;
-   width: 240px;
+   width: 320px;
   }
 
   & a {

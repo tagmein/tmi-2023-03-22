@@ -92,8 +92,7 @@ set updateBodyShowEditor [
 ]
 
 set initialShowEditor [
- at [ get localStorage ] getItem, call showEditor
- default 'true', is 'true'
+ at [ get localStorage ] getItem, call showEditor, is 'true'
 ]
 
 at [ get updateBodyShowEditor ], call [ get initialShowEditor ]
