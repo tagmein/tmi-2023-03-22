@@ -25,6 +25,13 @@ at [ get toolbar ] classList add, call [
   & > div {
    border-right: 1px solid #676767;
   }
+
+  & > a {
+   font-size: 18px;
+   height: 30px;
+   line-height: 1.8;
+   padding: 15px;
+  }
  '
  get style, point
 ]
@@ -109,9 +116,29 @@ set editorToggle [
  ] [ get initialShowEditor ]
 ]
 
+set spacer [
+ at [ get element, call ]
+]
+
+at [ get spacer ] classList add, call [
+ set name spacer
+ set rules '
+  & {
+   flex-grow: 1;
+  }
+ '
+ get style, point
+]
+
+set accountLink [
+ load ./lib/components/account-link.cr, point
+]
+
 at [ get build ]
 do [ call [ get toolbar ]       [ get channelSelect ] ]
 do [ call [ get toolbar ]       [ get editorToggle ] ]
+do [ call [ get toolbar ]       [ get spacer ] ]
+do [ call [ get toolbar ]       [ get accountLink ] ]
 do [ call [ get channelSelect ] [ get channelSelectLabel ] ]
 do [ call [ get channelSelect ] [ get channelSelectHidden ] ]
 do [ call [ get document body ] [ get toolbar ] ]

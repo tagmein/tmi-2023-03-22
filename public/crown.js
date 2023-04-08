@@ -291,11 +291,13 @@ function crown(
     }
     const test = (
      typeof currentValue === 'object' ||
-     typeof currentValue === 'string' ||
      typeof currentValue === 'function')
      ? currentValue
      : Object.getPrototypeOf(currentValue)
-    if (!test.hasOwnProperty?.(segment) && !(segment in test)) {
+    if (
+     !test.hasOwnProperty?.(segment) &&
+     (typeof test !== 'object' || !(segment in test))
+    ) {
      currentValue = undefined
      continue
     }
@@ -362,8 +364,8 @@ function crown(
    console.log(...values.map(uncrown))
   },
   not() {
-    currentValue = !currentValue
-    return me
+   currentValue = !currentValue
+   return me
   },
   async object(definition = []) {
    currentValue = {}

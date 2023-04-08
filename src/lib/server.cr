@@ -1,6 +1,10 @@
-set require [ at require ]
 set Buffer [ at Buffer ]
+set decode [ at decodeURIComponent ]
+set encode [ at encodeURIComponent ]
 set JSON [ at JSON ]
+set require [ at require ]
+set setTimeout [ at setTimeout ]
+
 set path [ at require, call path ]
 set fileSystem [ at require, call fs ]
 
@@ -25,6 +29,13 @@ set port [
  default 3456
 ]
 
+# define base private path
+set privateBase [
+ set root [ at __dirname ]
+ at [ get path ] join
+ call [ get root ] .. private
+]
+
 # define base public path
 set publicBase [
  set root [ at __dirname ]
@@ -32,14 +43,21 @@ set publicBase [
  call [ get root ] .. public
 ]
 
+# load private data utility
+set privateData [
+ load ./private-data.cr, point
+]
+
 # define routes
 set routes [
  object [
-  'GET /'               [ load ./routes/index.cr ]
-  'GET /hello'          [ load ./routes/hello.cr ]
-  'GET /content'        [ load ./routes/content.cr ]
-  'POST /content/new'   [ load ./routes/create-node.cr ]
-  'POST /content'       [ load ./routes/write-node-value.cr ]
+  'GET /'                     [ load ./routes/index.cr ]
+  'GET /api/hello'            [ load ./routes/hello.cr ]
+  'GET /api/account'          [ load ./routes/account-get.cr ]
+  'POST /api/account/sign-in' [ load ./routes/account-sign-in.cr ]
+  'GET /api/content'          [ load ./routes/content.cr ]
+  'POST /api/content/new'     [ load ./routes/create-node.cr ]
+  'POST /api/content'         [ load ./routes/write-node-value.cr ]
  ]
 ]
 

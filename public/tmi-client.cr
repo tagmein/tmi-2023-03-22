@@ -5,11 +5,10 @@ set messageRejectersById [ object ]
 function tmiClientSource tmiClientTarget [
  at [ get tmiClientSource ] addEventListener, call message [
   function message [
-   log got response [ get message data ]
+   log tmi-client response: [ get message data ]
    at [ get messageResolversById ] [ get message data messageId ], call [
     get message data response
    ]
-   log resolvers [ get messageResolversById ]
    unset [ get messageResolversById ] [ get message data messageId ]
   ]
  ]
@@ -19,13 +18,15 @@ function tmiClientSource tmiClientTarget [
     set [ get messageId ] current [ add 1 [ get messageId current ]]
     set [ get messageResolversById ] [ get messageId current ] [ get resolve ]
     set [ get messageRejectersById ] [ get messageId current ] [ get reject ]
-    at [ get tmiClientTarget ] postMessage, call [
+    set request [
      object [
       data      [ get data ]
       operation [ get operation ]
       messageId [ get messageId current ]
      ]
     ]
+    log tmi-client request: [ get request ]
+    at [ get tmiClientTarget ] postMessage, call [ get request ]
    ]
   ]
  ]

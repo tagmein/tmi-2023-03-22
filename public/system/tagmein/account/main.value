@@ -1,47 +1,11 @@
 set self [ at self ]
 set top [ at top ]
 
+set document [ get self document ]
+
 set tmiClient [
  load /tmi-client.cr, point
  call [ get self ] [ get top ]
-]
-
-set account [
- at [ get tmiClient ]
- call getAccount
-]
-
-log account information is [
- get account
-]
-
-set greeting [
- at [ get self ] document createElement
- call h3
-]
-
-at [ get self ] document body appendChild
-call [ get greeting ]
-
-set [ get greeting ] style color '#ffff00'
-
-set [ get greeting ] textContent [
- template 'Hello, %0' [
-  get account name
- ]
-]
-
-set termsLink [
- at [ get self ] document createElement
- call a
-]
-
-at [ get termsLink ]
-
-do [ 
- at setAttribute
- do [ call target _top ]
- do [ call href '/#tagmein/terms of use']
 ]
 
 set assign [
@@ -51,15 +15,232 @@ set assign [
  ]
 ]
 
-set [ current ] textContent 'Terms of service'
-
-set 'link color' '#00ffff'
-
-get assign, call [ get termsLink style ] [
- object [
-  color [ get 'link color' ]
+set element [
+ function tagName [
+  get document createElement
+  call [ get tagName, default div ]
  ]
 ]
 
-at [ get self ] document body appendChild
-call [ get termsLink ]
+set account [
+ at [ get tmiClient ]
+ call account:get
+]
+
+log tagmein/account account information is: [
+ get account
+]
+
+set greeting [ get element, call h3 ]
+
+get document body appendChild
+call [ get greeting ]
+
+set 'link color' '#00ffff'
+set 'text color' '#f0f0f0'
+
+get assign, call [ get self document body style ] [
+ object [
+  color [ get 'text color' ]
+  font-size 18px
+  margin '10px 20px'
+ ]
+]
+
+get account, true [
+ set [ get greeting ] textContent [
+  template 'Hello, %0' [ get account name ]
+ ]
+ set signOutButton [ get element, call button ]
+ set [ get signOutButton ] textContent 'Sign out'
+ get document body appendChild
+ call [ get signOutButton ]
+], false [
+ set [ get greeting ] textContent 'Hello, Guest'
+ set termsParagraph [ get element, call p ]
+
+ set [ get termsParagraph ] textContent 'By signing in, you agree to the Tag Me In '
+
+ set termsLink [ get element, call a ]
+ at [ get termsLink ], do [ 
+  at setAttribute
+  do [ call target _top ]
+  do [ call href '/#tagmein/terms of use']
+ ]
+
+ set [ current ] textContent 'terms of use'
+
+ get assign, call [ get termsLink style ] [
+  object [
+   color [ get 'link color' ]
+  ]
+ ]
+
+ get termsParagraph appendChild
+ call [ get termsLink ]
+
+ set signInForm [ get element, call form ]
+
+ set emailInput [ get element, call input ]
+ at [ get emailInput ] setAttribute
+ do [ call name email ]
+ do [ call placeholder email ]
+ do [ call required true ]
+
+ set passwordInput [ get element, call input ]
+ at [ get passwordInput ] setAttribute
+ do [ call name password ]
+ do [ call placeholder password ]
+ do [ call type password ]
+ do [ call required true ]
+
+ set createAccountLabel [
+  get element, call label
+ ]
+
+ set createAccountLabelText [
+  get element, call span
+ ]
+ set [
+  get createAccountLabelText
+ ] textContent 'Create account if none exists'
+
+ set createAccountCheckbox [
+  get element, call input
+ ]
+ at [ get createAccountCheckbox ] setAttribute
+ do [ call type checkbox ]
+
+ set submitButton [ get element, call input ]
+ at [ get submitButton ] setAttribute
+ do [ call type submit ]
+ do [ call value 'Sign in' ]
+
+ get assign, call [ get emailInput style ] [
+  object [
+   box-sizing border-box
+   display block
+   font-size 18px
+   margin-bottom 15px
+   padding 10px
+   width 300px
+  ]
+ ]
+
+ get assign, call [ get passwordInput style ] [
+  object [
+   box-sizing border-box
+   display block
+   font-size 18px
+   margin-bottom 15px
+   padding 10px
+   width 300px
+  ]
+ ]
+
+ get assign, call [ get submitButton style ] [
+  object [
+   display block
+   font-size 18px
+   margin-bottom 15px
+   padding 10px
+  ]
+ ]
+
+ get assign, call [ get createAccountLabel style ] [
+  object [
+   display block
+   font-size 18px
+   margin-bottom 15px
+   padding '5px 0'
+  ]
+ ]
+
+ get assign, call [ get createAccountCheckbox style ] [
+  object [
+   height 20px
+   margin '0 5px 0 0'
+   vertical-align -1px
+   width 20px
+  ]
+ ]
+
+ get createAccountLabel appendChild
+ do [ call [ get createAccountCheckbox ] ]
+ do [ call [ get createAccountLabelText ] ]
+
+ get signInForm appendChild
+ do [ call [ get emailInput ] ]
+ do [ call [ get passwordInput ] ]
+ do [ call [ get createAccountLabel ] ]
+ do [ call [ get submitButton ] ]
+
+ get document body appendChild
+ do [ call [ get termsParagraph ] ]
+ do [ call [ get signInForm ] ]
+
+ set setSignInLoading [
+  function [
+   get emailInput setAttribute
+   call disabled disabled
+   get passwordInput setAttribute
+   call disabled disabled
+   get createAccountCheckbox setAttribute
+   call disabled disabled
+   get submitButton setAttribute
+   call disabled disabled
+  ]
+ ]
+
+ set clearSignInLoading [
+  function [
+   get emailInput removeAttribute
+   call disabled
+   get passwordInput removeAttribute
+   call disabled
+   get createAccountCheckbox removeAttribute
+   call disabled
+   get submitButton removeAttribute
+   call disabled
+  ]
+ ]
+
+ set responseMessage [ get element, call ]
+ get assign, call [ get responseMessage style ] [
+  object [
+   box-sizing border-box
+   border '1px solid #c0c0c0'
+   margin '15px 0'
+   padding 20px
+  ]
+ ]
+
+ get signInForm addEventListener, call submit [
+  function event [
+   get responseMessage parentElement, true [
+    get document body removeChild
+    call [ get responseMessage ]
+   ]
+   get event preventDefault, call
+   get setSignInLoading, call
+   set signInResponse [
+    at [ get tmiClient ]
+    call account:sign-in [
+     object [
+      email [ get emailInput value ]
+      password [ get passwordInput value ]
+      create [ get createAccountCheckbox checked ]
+     ]
+    ]
+   ]
+   get clearSignInLoading, call
+   get signInResponse message, true [
+    set [ get responseMessage ] textContent [
+     get signInResponse message
+    ]
+    get document body appendChild
+    call [ get responseMessage ]
+   ]
+  ]
+ ]
+]

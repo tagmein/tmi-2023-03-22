@@ -95,7 +95,7 @@ at [ get valueEditor ] classList add, call [
    max-width: 100vw;
    padding: 10px 15px;
    resize: none;
-   width: 400px;
+   width: 500px;
   }
 
   body.show-editor & {
@@ -227,7 +227,7 @@ set saveEditorChanges [
   ]
   set response [
    at [ get fetch ], call [
-    template %0?path=%1 /content [
+    template %0?path=%1 /api/content [
      get hash
     ]
    ] [
@@ -375,7 +375,7 @@ set createNewNode [
   ]
   set response [
    at [ get fetch ], call [
-    template %0?path=%1 /content/new [
+    template %0?path=%1 /api/content/new [
      get hash
     ]
    ] [

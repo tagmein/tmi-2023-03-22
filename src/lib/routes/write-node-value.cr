@@ -3,21 +3,21 @@ set writeValue [
   promise [
    function resolve reject [
     set mainFilePath [
-     at [ get path ] join,
+     get path join,
      call [ get searchPath ] main.value
     ]
     set writeFileCallback [
      function err [
       get err, true [
-       at [ get resolve ], call false
+       get resolve, call false
       ]
       false [
-       at [ get resolve ], call true
+       get resolve, call true
       ]
      ]
     ]
     log saving to [ get mainFilePath ]
-    at [ get fileSystem ] writeFile
+    get fileSystem writeFile
     call [ get mainFilePath ] [ get value ] utf8 [ get writeFileCallback ]
    ]
   ]
@@ -26,7 +26,7 @@ set writeValue [
 
 set channelGroup [
  set output [ list ]
- at [ get requestParams path ] split, call /
+ get requestParams path split, call /
  at [ current ] 0
  is tagmein, true [
   set [ get output ] 0 system
@@ -38,15 +38,15 @@ set channelGroup [
 ]
 
 set searchPath [
- at [ get path ] join
+ get path join
  call [ get publicBase ] [ get channelGroup ] [ get requestParams path ]
 ]
 
 set responseString [
- at [ get JSON ] stringify, call [
+ get JSON stringify, call [
   object [
    success [
-    at [ get writeValue ]
+    get writeValue
     call [ get searchPath ] [ get requestBody value ]
    ]
   ]
@@ -54,6 +54,6 @@ set responseString [
 ]
 
 set [ get response ] statusCode 200
-at [ get response ]
+get response
 do [ at setHeader, call Content-Type application/json ]
 do [ at end, call [ get responseString ] ]

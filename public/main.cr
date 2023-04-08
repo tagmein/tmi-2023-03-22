@@ -11,12 +11,16 @@ set localStorage [ at localStorage ]
 set location     [ at location ]
 set setTimeout   [ at setTimeout ]
 
-set debounce [ load ./lib/debounce.cr, point ]
+set tmiApi [ load ./lib/tmi-api.cr, point ]
 set tmiMessageBus [ load ./lib/tmi-message-bus.cr, point ]
+set tmiOperator [ load ./lib/tmi-operator.cr, point ]
+
 set styleUnique [ object ]
 set style [ load ./lib/style.cr ]
 
 at [ load ./lib/global-style.cr ], point
+
+set debounce [ load ./lib/debounce.cr, point ]
 
 set build [
  function parent child [
@@ -84,7 +88,7 @@ set route [
    ]
    set response [
     at [ get fetch ], call [
-     template %0?path=%1 /content [
+     template %0?path=%1 /api/content [
       get hash
      ]
     ]
