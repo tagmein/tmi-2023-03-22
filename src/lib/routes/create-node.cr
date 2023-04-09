@@ -1,3 +1,18 @@
+set respondWithJson [
+ function data [
+  set [ get response ] statusCode 200
+  do [
+   at [ get response ]
+   do [ at setHeader, call Content-Type application/json ]
+   do [
+    at end, call [
+     get JSON stringify, call [ get data ]
+    ]
+   ]
+  ]
+ ]
+]
+
 set createNode [
  function searchPath nodeName [
   promise [
@@ -41,18 +56,69 @@ set searchPath [
  call [ get publicBase ] [ get channelGroup ] [ get requestParams path ]
 ]
 
-set responseString [
- at [ get JSON ] stringify, call [
-  object [
-   success [
-    at [ get createNode ]
-    call [ get searchPath ] [ get requestBody name ]
-   ]
-  ]
+set currentSession [
+ get session fromApiKey, call [
+  get request headers x-tmi-api-key
  ]
 ]
 
-set [ get response ] statusCode 200
-at [ get response ]
-do [ at setHeader, call Content-Type application/json ]
-do [ at end, call [ get responseString ] ]
+get currentSession, true [
+ get channelGroup
+ do [
+  is system, true [
+   get currentSession email, is hello@nateferrero.com, true [
+    get respondWithJson, call [
+     object [
+      success [
+       at [ get createNode ]
+       call [ get searchPath ] [ get requestBody name ]
+      ]
+     ]
+    ]
+   ], false [
+    get respondWithJson, call [
+     object [
+      success false
+     ]
+    ]
+   ]
+  ]
+ ]
+ do [
+  is data, true [
+   set channelData [
+    get channelTools byKey, call [ get channelKey ]
+   ]
+   get channelData, true [
+    get channelData owner, is [ get currentSession email ], true [
+     get respondWithJson, call [
+      object [
+       success [
+        at [ get createNode ]
+        call [ get searchPath ] [ get requestBody name ]
+       ]
+      ]
+     ]
+    ], false [
+     get respondWithJson, call [
+      object [
+       success false
+      ]
+     ]
+    ]
+   ], false [
+    get respondWithJson, call [
+     object [
+      success false
+     ]
+    ]
+   ]
+  ]
+ ]
+], false [
+ get respondWithJson, call [
+  object [
+   success false
+  ]
+ ]
+]

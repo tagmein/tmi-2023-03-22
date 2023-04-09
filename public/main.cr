@@ -86,15 +86,12 @@ set route [
     get location hash,
     at substring, call 1
    ]
-   set response [
-    get fetch, call [
-     template %0?path=%1 /api/content [
+   set responseData [
+    get tmiApi, call [
+     template %0?path=%1 /content [
       get hash
      ]
     ]
-   ]
-   set responseData [
-    get response json, call
    ]
    get toolbar setChannels, call [
     get responseData channels

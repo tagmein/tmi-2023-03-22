@@ -43,7 +43,7 @@ set publicBase [
  call [ get root ] .. public
 ]
 
-# random key generator
+set channelTools [ load ./channel-tools.cr, point ]
 set privateData [ load ./private-data.cr, point ]
 set randomKey [ load ./random-key.cr, point ]
 set session [ load ./session.cr, point ]
@@ -60,6 +60,9 @@ set routes [
   'POST /api/content'         [ load ./routes/write-node-value.cr ]
   'GET /api/sessions'         [ load ./routes/sessions-list.cr ]
   'POST /api/sessions/delete' [ load ./routes/session-delete.cr ]
+  'GET /api/channels'         [ load ./routes/channels-list.cr ]
+  'POST /api/channels/create' [ load ./routes/channel-create.cr ]
+  'POST /api/channels/forget' [ load ./routes/channel-forget.cr ]
  ]
 ]
 
@@ -98,7 +101,7 @@ set agent [
    get parseRequestBody, call [ get request ]
   ]
 
-  log [ get requestBody ]
+  # log [ get requestBody ]
 
   set requestKey [
    template '%0 %1' [ get requestMethod ] [ get requestPath ]

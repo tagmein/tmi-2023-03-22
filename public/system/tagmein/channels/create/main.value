@@ -1,0 +1,173 @@
+set self [ at self ]
+set top [ at top ]
+
+set document [ get self document ]
+
+set tmiClient [
+ load /tmi-client.cr, point
+ call [ get self ] [ get top ]
+]
+
+set assign [
+ function target values [
+  at [ get self ] Object assign
+  call [ get target ] [ get values ]
+ ]
+]
+
+set element [
+ function tagName [
+  get document createElement
+  call [ get tagName, default div ]
+ ]
+]
+
+set account [
+ get tmiClient, call account:get
+]
+
+set greeting [ get element, call h1 ]
+
+get document body appendChild
+call [ get greeting ]
+
+set 'link color' '#00ffff'
+set 'text color' '#f0f0f0'
+
+get assign, call [ get self document body style ] [
+ object [
+  color [ get 'text color' ]
+  font-size 18px
+  padding '0 20px'
+ ]
+]
+
+get account, false [
+ set [ get greeting ] textContent 'Signed out'
+], true [
+ set [ get greeting ] textContent 'Create channel'
+ set termsParagraph [ get element, call p ]
+
+ set [ get termsParagraph ] textContent 'By creating a channel, you agree to the Tag Me In '
+
+ set termsLink [ get element, call a ]
+ at [ get termsLink ], do [ 
+  at setAttribute
+  do [ call target _top ]
+  do [ call href '/#tagmein/terms of use']
+ ]
+
+ set [ current ] textContent 'terms of use'
+
+ get assign, call [ get termsLink style ] [
+  object [
+   color [ get 'link color' ]
+  ]
+ ]
+
+ get termsParagraph appendChild
+ call [ get termsLink ]
+
+ set createChannelForm [ get element, call form ]
+
+ set nameInput [ get element, call input ]
+ at [ get nameInput ] setAttribute
+ do [ call name name ]
+ do [ call placeholder 'channel name' ]
+ do [ call required true ]
+
+ set submitButton [ get element, call input ]
+ at [ get submitButton ] setAttribute
+ do [ call type submit ]
+ do [ call value Create ]
+
+ get assign, call [ get nameInput style ] [
+  object [
+   box-sizing border-box
+   display block
+   font-size 18px
+   margin-bottom 15px
+   padding 10px
+   width 300px
+  ]
+ ]
+
+ get assign, call [ get submitButton style ] [
+  object [
+   display block
+   font-size 18px
+   margin-bottom 15px
+   padding 10px
+  ]
+ ]
+
+ get createChannelForm appendChild
+ do [ call [ get nameInput ] ]
+ do [ call [ get submitButton ] ]
+
+ get document body appendChild
+ do [ call [ get termsParagraph ] ]
+ do [ call [ get createChannelForm ] ]
+
+ set setLoading [
+  function [
+   get nameInput setAttribute
+   call disabled disabled
+   get submitButton setAttribute
+   call disabled disabled
+  ]
+ ]
+
+ set clearLoading [
+  function [
+   get nameInput removeAttribute
+   call disabled
+   get submitButton removeAttribute
+   call disabled
+  ]
+ ]
+
+ set responseMessage [ get element, call ]
+ get assign, call [ get responseMessage style ] [
+  object [
+   box-sizing border-box
+   border '1px solid #c0c0c0'
+   margin '15px 0'
+   padding 20px
+  ]
+ ]
+
+ get createChannelForm addEventListener, call submit [
+  function event [
+   get responseMessage parentElement, true [
+    get document body removeChild
+    call [ get responseMessage ]
+   ]
+   get event preventDefault, call
+   get setLoading, call
+   set createChannelResponse [
+    at [ get tmiClient ]
+    call channel:create [
+     object [
+      name [ get nameInput value ]
+     ]
+    ]
+   ]
+   get clearLoading, call
+   get createChannelResponse message, true [
+    set [ get responseMessage ] textContent [
+     get createChannelResponse message
+    ]
+    get document body appendChild
+    call [ get responseMessage ]
+   ]
+   get createChannelResponse key, true [
+    set [ get top ] location href [
+     template '/#%0' [
+      get createChannelResponse key
+     ]
+    ]
+   ]
+  ]
+ ]
+]

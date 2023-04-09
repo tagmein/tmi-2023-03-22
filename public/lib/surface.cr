@@ -218,32 +218,16 @@ set loadedHash [ object ]
 
 set saveEditorChanges [
  function [
-  set requestBody [
-   at [ get JSON ] stringify, call [
-    object [
-     value [ get valueEditor value ]
-    ]
-   ]
-  ]
-  set response [
-   at [ get fetch ], call [
-    template %0?path=%1 /api/content [
+  set responseData [
+   get tmiApi, call [
+    template %0?path=%1 /content [
      get loadedHash current
     ]
    ] [
     object [
-     method POST
-     headers [
-      object [
-       Content-Type application/json
-      ]
-     ]
-     body [ get requestBody ]
+     value [ get valueEditor value ]
     ]
    ]
-  ]
-  set responseData [
-   at [ get response ] json, call
   ]
  ]
 ]
@@ -366,32 +350,16 @@ set createNewNode [
    get location hash,
    at substring, call 1
   ]
-  set requestBody [
-   at [ get JSON ] stringify, call [
-    object [
-     name [ get nodeName ]
-    ]
-   ]
-  ]
-  set response [
-   at [ get fetch ], call [
-    template %0?path=%1 /api/content/new [
+  set responseData [
+   get tmiApi, call [
+    template %0?path=%1 /content/new [
      get hash
     ]
    ] [
     object [
-     method POST
-     headers [
-      object [
-       Content-Type application/json
-      ]
-     ]
-     body [ get requestBody ]
+     name [ get nodeName ]
     ]
    ]
-  ]
-  set responseData [
-   at [ get response ] json, call
   ]
   get responseData success, true [
    set [ get newNodeInput ] value ''

@@ -1,21 +1,151 @@
 set self [ at self ]
 set top [ at top ]
 
+set alert [ at alert ]
+set Date [ at Date ]
+set document [ get self document ]
+
 set tmiClient [
  load /tmi-client.cr, point
  call [ get self ] [ get top ]
 ]
 
-set greeting [
- at [ get self ] document createElement
- call h3
+set element [
+ function tagName [
+  get document createElement
+  call [ get tagName, default div ]
+ ]
 ]
 
-at [ get self ] document body appendChild
+set style [ get element, call style ]
+
+set [ get style ] textContent '
+ body {
+  color: #f0f0f0;
+  font-size: 18px;
+  margin: 10px 20px;
+ }
+ table {
+  width: 100%;
+  min-width: 600px;
+ }
+ td, th {
+  padding: 10px;
+ }
+ button {
+  cursor: pointer;
+  font-size: inherit;
+  padding: 10px;
+ }
+ button:disabled {
+  cursor: not-allowed;
+ }
+ a {
+  color: inherit;
+  border-bottom: 1px solid;
+  text-decoration: none;
+ }
+'
+
+get document head appendChild, call [ get style ]
+
+set greeting [ get element, call h1 ]
+
+get document body appendChild
 call [ get greeting ]
 
-set [ get greeting ] style color '#ffff00'
+set channels [
+ get tmiClient, call channel:list
+]
 
-set [ get greeting ] textContent [
- template 'Create a channel'
+get channels, false [
+ set [ get greeting ] textContent 'Signed out'
+], true [
+ set [ get greeting ] textContent 'Channels'
+ set table [ get element, call table ]
+ get document body appendChild, call [ get table ]
+ set tableHeader [ get element, call tr ]
+ get table appendChild, call [ get tableHeader ]
+ each [ list [
+  Name
+  Owner
+  Created
+  Key
+  Action
+ ] ] [
+  function title [
+   set headerCell [ get element, call th ]
+   get tableHeader appendChild, call [
+    get headerCell
+   ]
+   set [ get headerCell ] textContent [
+    get title
+   ]
+  ]
+ ]
+ get channels, map [
+  function channel [
+   get channel, true [
+    set tableRow [ get element, call tr ]
+    get table appendChild, call [ get tableRow ]
+    set cell [
+     function content [
+      set tableCell [ get element, call td ]
+      set [ get tableCell ] textContent [
+       get content
+      ]
+      get tableRow appendChild, call [
+       get tableCell
+      ]
+     ]
+    ]
+    get cell
+    do [ call [ get channel name ] ]
+    do [ call [ get channel owner ] ]
+    do [ call [
+     get Date, new [ get channel created ]
+     at toLocaleString, call
+    ] ]
+    set keyCell [ get element, call td ]
+    get tableRow appendChild, call [
+     get keyCell
+    ]
+    set channelLink [ get element, call a ]
+    get channelLink setAttribute
+    do [ call target _top ]
+    do [ call href [
+     template '/#%0' [ get channel key ]
+    ] ]
+    set [ get channelLink ] textContent [
+     get channel key
+    ]
+    get keyCell appendChild
+    call [ get channelLink ]
+    set actionCell [ get element, call td ]
+    get tableRow appendChild, call [
+     get actionCell
+    ]
+    set forgetButton [ get element, call button ]
+    get actionCell appendChild, call [
+     get forgetButton
+    ]
+    set [ get forgetButton ] textContent Forget
+    get forgetButton addEventListener
+    call click [
+     function [
+      get tmiClient, call channel:forget [
+       object [
+        key [ get channel key ]
+       ]
+      ], false [
+       get alert, call 'Something went wrong'
+      ], true [
+       get table removeChild
+       call [ get tableRow ]
+      ]
+     ]
+    ]
+   ]
+  ]
+ ]
 ]

@@ -1,3 +1,18 @@
+set respondWithJson [
+ function data [
+  set [ get response ] statusCode 200
+  do [
+   at [ get response ]
+   do [ at setHeader, call Content-Type application/json ]
+   do [
+    at end, call [
+     get JSON stringify, call [ get data ]
+    ]
+   ]
+  ]
+ ]
+]
+
 set readDirectories [
  function searchPath [
   promise [
@@ -72,10 +87,36 @@ set readValue [
  ]
 ]
 
+set pathExists [
+ function searchPath [
+  promise [
+   function resolve [
+    at [ get fileSystem ] exists
+    call [ get searchPath ] [ get resolve ]
+   ]
+  ]
+ ]
+]
+
+set channelKey [
+ get requestParams path split, call /
+ at [ current ] 0
+]
+
+set relativeNodePath [
+ get requestParams path split, call /
+ at slice, call 1
+ at join, call /
+]
+
+set channelKey [
+ get requestParams path split, call /
+ at [ current ] 0
+]
+
 set channelGroup [
  set output [ list ]
- at [ get requestParams path ] split, call /
- at [ current ] 0
+ get channelKey
  is tagmein, true [
   set [ get output ] 0 system
  ]
@@ -90,26 +131,76 @@ set searchPath [
  call [ get publicBase ] [ get channelGroup ] [ get requestParams path ]
 ]
 
-set responseString [
- at [ get JSON ] stringify, call [
-  object [
-   value [
-    at [ get readValue ], call [ get searchPath ]
+set currentSession [
+ get session fromApiKey, call [
+  get request headers x-tmi-api-key
+ ]
+]
+
+set channelHasPath [
+ function testChannelKey testPath [
+  set testChannelGroup [
+   set output [ list ]
+   get testChannelKey
+   is tagmein, true [
+    set [ get output ] 0 system
    ]
-   channels [
-    list [
-     [ object [ key tagmein, label 'Tag Me In' ] ]
-     [ object [ key foobar, label 'Foo Bar' ] ]
-    ]
+   false [
+    set [ get output ] 0 data
    ]
-   nodes [
-    at [ get readDirectories ], call [ get searchPath ]
+   at [ get output ] 0
+  ]
+  get pathExists, call [
+   get path join
+   call [ get publicBase ] [ get testChannelGroup ] [
+    get testChannelKey
+   ] [
+    get testPath
    ]
   ]
  ]
 ]
 
-set [ get response ] statusCode 200
-at [ get response ]
-do [ at setHeader, call Content-Type application/json ]
-do [ at end, call [ get responseString ] ]
+set channelsWithPath [
+ function relativePath [
+  set resultChannels [ object ]
+  get currentSession, true [
+   set [ get resultChannels ] current [
+    list [
+     [ object [ key tagmein, name 'Tag Me In' ] ]
+    ]
+    at concat, call [
+     get channelTools list
+     call [ get currentSession email ]
+    ]
+    filter [
+     function testChannel [
+      get channelHasPath
+      call [ get testChannel key ] [ get relativePath ]
+     ]
+    ]
+   ]
+  ], false [
+   set [ get resultChannels ] current [
+    list [
+     [ object [ key tagmein, name 'Tag Me In' ] ]
+    ]
+   ]
+  ]
+  get resultChannels current
+ ]
+]
+
+get respondWithJson, call [
+ object [
+  value [
+   at [ get readValue ], call [ get searchPath ]
+  ]
+  channels [
+   get channelsWithPath, call [ get relativeNodePath ]
+  ]
+  nodes [
+   at [ get readDirectories ], call [ get searchPath ]
+  ]
+ ]
+]

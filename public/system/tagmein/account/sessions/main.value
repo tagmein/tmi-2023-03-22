@@ -44,7 +44,7 @@ set [ get style ] textContent '
 
 get document head appendChild, call [ get style ]
 
-set greeting [ get element, call h3 ]
+set greeting [ get element, call h1 ]
 
 get document body appendChild
 call [ get greeting ]

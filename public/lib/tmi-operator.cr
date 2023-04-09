@@ -24,6 +24,27 @@ function operation data [
   ]
  ]
  do [
+  is channel:create, true [
+   set [ get response ] current [
+    get tmiApi, call /channels/create [ get data ]
+   ]
+  ]
+ ]
+ do [
+  is channel:forget, true [
+   set [ get response ] current [
+    get tmiApi, call /channels/forget [ get data ]
+   ]
+  ]
+ ]
+ do [
+  is channel:list, true [
+   set [ get response ] current [
+    get tmiApi, call /channels
+   ]
+  ]
+ ]
+ do [
   is account:sign-in, true [
    set [ get response ] current [
     get tmiApi, call /account/sign-in [ get data ]

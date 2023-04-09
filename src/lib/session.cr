@@ -1,7 +1,7 @@
-set byId [
- function id currentSessionKey [
+set byKey [
+ function key currentSessionKey [
   get privateData, call [ 
-   template session:%0 [ get id ]
+   template session:%0 [ get key ]
   ]
   set value [ at read, call ]
   get value, true [
@@ -13,17 +13,17 @@ set byId [
  ]
 ]
 
-set deleteById [
- function id [
+set deleteByKey [
+ function key [
   get privateData, call [ 
-   template session:%0 [ get id ]
+   template session:%0 [ get key ]
   ]
   at delete, call
  ]
 ]
 
 object [
- byId [ get byId ]
+ byKey [ get byKey ]
  create [
   function email userAgent [
    set sessionListData [
@@ -80,7 +80,7 @@ object [
    set responseObject [ object ]
    get currentList includes
    call [ get sessionKeyToDelete ], true [
-    get deleteById, call [ get sessionKeyToDelete ]
+    get deleteByKey, call [ get sessionKeyToDelete ]
     get sessionListData write, call [
      get currentList, filter [
       function item [
@@ -109,8 +109,8 @@ object [
    get currentList, true [
     set [ get responseList ] current [
      get currentList, map [
-      function id [
-        get byId, call [ get id ] [ get currentSessionKey ]
+      function key [
+        get byKey, call [ get key ] [ get currentSessionKey ]
       ]
      ]
     ]
