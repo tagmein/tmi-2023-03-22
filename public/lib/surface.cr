@@ -55,22 +55,24 @@ at [ get nodeList ] classList add, call [
    border-bottom: 1px solid #676767;
   }
 
-  & a[data-current="true"] {
-   font-weight: bold;
-  }
-
   & a[data-parent="true"]::after {
-   content: "\00AB";
+   content: "\2022";
    display: block;
    font-size: 28px;
    position: absolute;
    right: 15px;
    top: -5px;
-   transform: rotate(90deg);
+   transform: rotate(-90deg);
   }
 
   & a:hover {
    background-color: #565656;
+  }
+
+  & a[data-current="true"],
+  & a[data-current="true"]:hover {
+   background-color: #787878;
+   color: #f0f0f0;
   }
  '
  get style, point
@@ -212,12 +214,10 @@ set renderPreview [
  ]
 ]
 
+set loadedHash [ object ]
+
 set saveEditorChanges [
  function [
-  set hash [
-   get location hash,
-   at substring, call 1
-  ]
   set requestBody [
    at [ get JSON ] stringify, call [
     object [
@@ -228,7 +228,7 @@ set saveEditorChanges [
   set response [
    at [ get fetch ], call [
     template %0?path=%1 /api/content [
-     get hash
+     get loadedHash current
     ]
    ] [
     object [
@@ -418,8 +418,23 @@ at [ get build ], call [ get newNodeContainer ] [ get createButton ]
 object [
  setNodes [
   function nodes [
-   set [ get nodeList ] innerHTML ''
    set segments [ get getPathSegments, call ]
+   set [ get nodeList ] innerHTML ''
+   set rootLink [
+    at [ get element ], call a
+   ]
+   at [ get rootLink ] setAttribute, call data-parent true
+   get segments length, is 0, true [
+    at [ get rootLink ] setAttribute, call data-current true 
+   ]
+   set [ get rootLink ] href [
+    template '/#%0' [
+     get getChannel, call
+    ]
+    at replace, call [ regexp /$ ] ''
+   ]
+   set [ get rootLink ] textContent Home
+   at [ get build ], call [ get nodeList ] [ get rootLink ]
    each [ get segments ] [
     function segment index [
      set parentLink [
@@ -433,7 +448,9 @@ object [
       template '/#%0/%1' [
        get getChannel, call
       ] [
-       at [ get segments ] slice, call 0 [ get index ]
+       at [ get segments ] slice, call 0 [ 
+        add 1 [ get index ]
+       ]
        at join, call /
       ]
       at replace, call [ regexp /$ ] ''
@@ -466,6 +483,10 @@ object [
  ]
  setValue [
   function value [
+   set [ get loadedHash ] current [
+    get location hash,
+    at substring, call 1
+   ]
    set [ get valueEditor ] value [ get value ]
    at [ get renderPreview ], call
   ]

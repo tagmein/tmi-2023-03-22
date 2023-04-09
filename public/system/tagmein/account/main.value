@@ -23,15 +23,10 @@ set element [
 ]
 
 set account [
- at [ get tmiClient ]
- call account:get
+ get tmiClient, call account:get
 ]
 
-log tagmein/account account information is: [
- get account
-]
-
-set greeting [ get element, call h3 ]
+set greeting [ get element, call h1 ]
 
 get document body appendChild
 call [ get greeting ]
@@ -43,18 +38,35 @@ get assign, call [ get self document body style ] [
  object [
   color [ get 'text color' ]
   font-size 18px
-  margin '10px 20px'
+  padding '0 20px'
  ]
 ]
 
 get account, true [
  set [ get greeting ] textContent [
-  template 'Hello, %0' [ get account name ]
+  template 'Hello, %0' [
+   get account name, default [
+    get account email
+   ]
+  ]
  ]
  set signOutButton [ get element, call button ]
+ get assign, call [ get signOutButton style ] [
+  object [
+   display block
+   font-size 18px
+   margin-bottom 15px
+   padding 10px
+  ]
+ ]
  set [ get signOutButton ] textContent 'Sign out'
  get document body appendChild
  call [ get signOutButton ]
+ get signOutButton addEventListener, call click [
+  function [
+   get tmiClient, call account:sign-out
+  ]
+ ]
 ], false [
  set [ get greeting ] textContent 'Hello, Guest'
  set termsParagraph [ get element, call p ]

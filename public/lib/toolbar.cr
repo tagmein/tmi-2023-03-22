@@ -138,7 +138,7 @@ at [ get build ]
 do [ call [ get toolbar ]       [ get channelSelect ] ]
 do [ call [ get toolbar ]       [ get editorToggle ] ]
 do [ call [ get toolbar ]       [ get spacer ] ]
-do [ call [ get toolbar ]       [ get accountLink ] ]
+do [ call [ get toolbar ]       [ get accountLink container ] ]
 do [ call [ get channelSelect ] [ get channelSelectLabel ] ]
 do [ call [ get channelSelect ] [ get channelSelectHidden ] ]
 do [ call [ get document body ] [ get toolbar ] ]
@@ -152,6 +152,7 @@ at [ get channelSelectHidden ] addEventListener, call change [
 ]
 
 object [
+ refreshAccountLink [ get accountLink refresh ]
  setChannels [
   function channels selectedChannel [
    set [ get channelSelectHidden ] innerHTML ''

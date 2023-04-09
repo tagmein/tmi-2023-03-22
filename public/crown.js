@@ -170,22 +170,32 @@ function crown(
      if (isFirstSegment) {
       currentValue = candidate
      } else {
-      if (
-       currentValue &&
-       candidate in currentValue
-      ) {
-       const nextValue = currentValue[candidate]
-       if (typeof nextValue === 'function') {
-        currentValue =
-         currentValue[candidate].bind(
-          currentValue
-         )
+      if (typeof currentValue === 'string' && typeof segment === 'number') {
+       currentValue = currentValue[segment]
+      }
+      else {
+       const test = (
+        typeof currentValue === 'object' ||
+        typeof currentValue === 'function')
+        ? currentValue
+        : Object.getPrototypeOf(currentValue)
+       if (
+        currentValue &&
+        candidate in test
+       ) {
+        const nextValue = currentValue[candidate]
+        if (typeof nextValue === 'function') {
+         currentValue =
+          currentValue[candidate].bind(
+           currentValue
+          )
+        } else {
+         currentValue = currentValue[candidate]
+        }
        } else {
-        currentValue = currentValue[candidate]
+        currentValue = undefined
+        break
        }
-      } else {
-       currentValue = undefined
-       break
       }
      }
     }
@@ -229,6 +239,12 @@ function crown(
    }
    return me
   },
+  divide(...argumentCrowns) {
+   currentValue = argumentCrowns.reduce(
+    (product, x) => product / uncrown(x),
+    1
+   )
+  },
   do() {
    return me
   },
@@ -251,6 +267,24 @@ function crown(
      .clone()
      .walk(uncrown(instructionCrown))
    }
+  },
+  async filter(argumentCrown) {
+   if (!Array.isArray(currentValue)) {
+    throw new Error('Can only use "filter" when current value is an Array')
+   }
+   const callback = uncrown(argumentCrown)
+   const filteredValue = []
+   await Promise.all(
+    currentValue.map(
+     async (x) => {
+      if (await uncrown(await callback(x))) {
+       filteredValue.push(x)
+      }
+     }
+    )
+   )
+   currentValue = filteredValue
+   return me
   },
   function(...argumentNames) {
    const functionImplementation =
@@ -301,11 +335,11 @@ function crown(
      currentValue = undefined
      continue
     }
-    if (typeof test[segment] === 'function') {
-     currentValue = test[segment].bind(currentValue)
+    if (typeof currentValue[segment] === 'function') {
+     currentValue = currentValue[segment].bind(currentValue)
     }
     else {
-     currentValue = test[segment]
+     currentValue = currentValue[segment]
     }
    }
    return me
@@ -362,6 +396,28 @@ function crown(
   },
   log(...values) {
    console.log(...values.map(uncrown))
+  },
+  async map(argumentCrown) {
+   if (!Array.isArray(currentValue)) {
+    throw new Error('Can only use "map" when current value is an Array')
+   }
+   const callback = uncrown(argumentCrown)
+   currentValue = await Promise.all(
+    currentValue.map(
+     async (x) => uncrown(await callback(x))
+    )
+   )
+   return me
+  },
+  multiply(...argumentCrowns) {
+   currentValue = argumentCrowns.reduce(
+    (product, x) => product * uncrown(x),
+    1
+   )
+  },
+  new(...argumentCrowns) {
+   currentValue = new currentValue(...argumentCrowns.map(uncrown))
+   return me
   },
   not() {
    currentValue = !currentValue
@@ -469,6 +525,12 @@ function crown(
     names.set(name, uncrown(value))
    }
    return me
+  },
+  subtract(...argumentCrowns) {
+   currentValue = argumentCrowns.reduce(
+    (sum, x) => sum - uncrown(x),
+    0
+   )
   },
   template(template, ...parameterCrowns) {
    const parameters = parameterCrowns.map(uncrown)

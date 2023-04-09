@@ -1,4 +1,7 @@
 function url data [
+ set apiKey [
+  get localStorage getItem, call tmiApiKey
+ ]
  set apiResponse [ object ]
  get data, true [
   set response [
@@ -10,6 +13,7 @@ function url data [
      headers [
       object [
        Content-Type application/json
+       x-tmi-api-key [ get apiKey ]
       ]
      ]
      body [
@@ -31,6 +35,15 @@ function url data [
   set response [
    at [ get fetch ], call [
     template %0%1 /api [ get url ]
+   ] [
+    object [
+     method GET
+     headers [
+      object [
+       x-tmi-api-key [ get apiKey ]
+      ]
+     ]
+    ]
    ]
   ]
   get response ok, true [
@@ -40,6 +53,14 @@ function url data [
   ], false [
    log API request failed [ get url ] [ get data ] [
     get response statusText
+   ]
+  ]
+ ]
+
+ get url, is /account/sign-in, true [
+  get apiResponse current key, true [
+   get localStorage setItem, call tmiApiKey [
+    get apiResponse current key
    ]
   ]
  ]

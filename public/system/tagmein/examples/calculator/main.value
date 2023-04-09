@@ -12,8 +12,8 @@
   background-color: #d0d0d0;
  }
 </style>
-<input id="expression">
-<input id="output" readonly>
+<input id="expression" placeholder="input">
+<input id="output" readonly placeholder="result">
 <script>
  const output =
   document.getElementById('output')
@@ -21,7 +21,9 @@
   document.getElementById('expression')
  expr.addEventListener('keyup', () => {
    try {
-    output.value = eval(expr.value)
+    output.value = expr.value === ''
+     ? ''
+     : eval(expr.value)
    }
    catch (e) {
     output.value = e.message

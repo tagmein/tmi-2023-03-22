@@ -1,16 +1,16 @@
+set Array [ at Array ]
 set Buffer [ at Buffer ]
+set Date [ at Date ]
 set decode [ at decodeURIComponent ]
 set encode [ at encodeURIComponent ]
 set JSON [ at JSON ]
+set Math [ at Math ]
 set require [ at require ]
 set setTimeout [ at setTimeout ]
 
-set path [ at require, call path ]
 set fileSystem [ at require, call fs ]
-
-set querystring [
- at require, call querystring
-]
+set path [ at require, call path ]
+set querystring [ at require, call querystring ]
 
 # plain text content type header
 set plainText 'text/plain; charset=utf-8'
@@ -43,10 +43,10 @@ set publicBase [
  call [ get root ] .. public
 ]
 
-# load private data utility
-set privateData [
- load ./private-data.cr, point
-]
+# random key generator
+set privateData [ load ./private-data.cr, point ]
+set randomKey [ load ./random-key.cr, point ]
+set session [ load ./session.cr, point ]
 
 # define routes
 set routes [
@@ -58,6 +58,8 @@ set routes [
   'GET /api/content'          [ load ./routes/content.cr ]
   'POST /api/content/new'     [ load ./routes/create-node.cr ]
   'POST /api/content'         [ load ./routes/write-node-value.cr ]
+  'GET /api/sessions'         [ load ./routes/sessions-list.cr ]
+  'POST /api/sessions/delete' [ load ./routes/session-delete.cr ]
  ]
 ]
 

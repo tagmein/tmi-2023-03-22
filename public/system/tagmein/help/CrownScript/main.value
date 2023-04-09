@@ -1,2 +1,19 @@
-
-CrownScript documentation
+<style>
+ body {
+  color: #f0f0f0;
+  padding: 0 20px;
+  font-size: 18px;
+  line-height: 1.65;
+ }
+ pre {
+  font-size: inherit;
+  white-space: pre-wrap;
+ }
+ a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid;
+ }
+</style>
+<h1>CrownScript</h1>
+<p>Documentation coming soon, in the meantime, look at the *.cr files in the source code for Tag Me In: <a target="_blank" href="https://github.com/tagmein/tmi-3-22">https://github.com/tagmein/tmi-3-22</a>

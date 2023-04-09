@@ -24,14 +24,14 @@ set debounce [ load ./lib/debounce.cr, point ]
 
 set build [
  function parent child [
-  at [ get parent ] appendChild
+  get parent appendChild
   call [ get child ]
  ]
 ]
 
 set element [
  function tagName [
-  at [ get document ] createElement, call [
+  get document createElement, call [
    get tagName, default div
   ]
  ]
@@ -40,7 +40,7 @@ set element [
 set getChannel [
  function [
   at [
-   at [ get location ] hash substring, call 1
+   get location hash substring, call 1
    at split, call /
   ] 0
  ]
@@ -49,7 +49,7 @@ set getChannel [
 set getPathSegments [
  function [
   at [
-   at [ get location ] hash substring, call 1
+   get location hash substring, call 1
    at split, call /
   ] slice, call 1
  ]
@@ -58,11 +58,11 @@ set getPathSegments [
 set switchChannel [
  function newChannel [
   set segments [
-   at [ get location ] hash split, call /
+   get location hash split, call /
   ]
   set [ get segments ] 0 [ get newChannel ]
   set [ get location ] hash [
-   at [ get segments ] join, call /
+   get segments join, call /
   ]
  ]
 ]
@@ -77,7 +77,7 @@ set surface [
 
 set route [
  function [
-  at [ get location ] hash length
+  get location hash length
   false [
    set [ get location ] hash tagmein
   ]
@@ -87,29 +87,29 @@ set route [
     at substring, call 1
    ]
    set response [
-    at [ get fetch ], call [
+    get fetch, call [
      template %0?path=%1 /api/content [
       get hash
      ]
     ]
    ]
    set responseData [
-    at [ get response ] json, call
+    get response json, call
    ]
-   at [ get toolbar ] setChannels, call [
+   get toolbar setChannels, call [
     get responseData channels
-   ] [ at [ get getChannel ], call ]
-   at [ get surface ] setNodes, call [
+   ] [ get getChannel, call ]
+   get surface setNodes, call [
     get responseData nodes
    ]
-   at [ get surface ] setValue, call [
+   get surface setValue, call [
     get responseData value
    ]
+   get toolbar refreshAccountLink, call
   ]
  ]
 ]
 
-at [ get listen ], call hashchange [ get route ]
-at [ get route ], call
-
-at [ get listen ], call message [ get tmiMessageBus ]
+get listen, call hashchange [ get route ]
+get listen, call message [ get tmiMessageBus ]
+get route, call

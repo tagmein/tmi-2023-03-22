@@ -18,13 +18,12 @@ set currentSession [
   get request headers x-tmi-api-key
  ]
 ]
+
 get currentSession, true [
- set accountData [
-  get privateData, call [ 
-   template account:%0 [ get currentSession email ]
+ set sessionList [
+  get session list, call [ get currentSession email ] [
+   get currentSession key
   ]
  ]
- get respondWithJson, call [
-  get accountData read, call
- ]
+ get respondWithJson, call [ get sessionList ]
 ], false [ get respondWithJson, call null ]

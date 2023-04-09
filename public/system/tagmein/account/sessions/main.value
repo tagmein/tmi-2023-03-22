@@ -1,0 +1,138 @@
+set self [ at self ]
+set top [ at top ]
+
+set alert [ at alert ]
+set Date [ at Date ]
+set document [ get self document ]
+
+set tmiClient [
+ load /tmi-client.cr, point
+ call [ get self ] [ get top ]
+]
+
+set element [
+ function tagName [
+  get document createElement
+  call [ get tagName, default div ]
+ ]
+]
+
+set style [ get element, call style ]
+
+set [ get style ] textContent '
+ body {
+  color: #f0f0f0;
+  font-size: 18px;
+  margin: 10px 20px;
+ }
+ table {
+  width: 100%;
+  min-width: 600px;
+ }
+ td, th {
+  padding: 10px;
+ }
+ button {
+  cursor: pointer;
+  font-size: inherit;
+  padding: 10px;
+ }
+ button:disabled {
+  cursor: not-allowed;
+ }
+'
+
+get document head appendChild, call [ get style ]
+
+set greeting [ get element, call h3 ]
+
+get document body appendChild
+call [ get greeting ]
+
+set sessions [
+ get tmiClient, call session:list
+]
+
+get sessions, false [
+ set [ get greeting ] textContent 'Signed out'
+], true [
+ set [ get greeting ] textContent 'Active sessions'
+ set table [ get element, call table ]
+ get document body appendChild, call [ get table ]
+ set tableHeader [ get element, call tr ]
+ get table appendChild, call [ get tableHeader ]
+ each [ list [
+  'User Agent'
+  Created
+  Key
+  Action
+ ] ] [
+  function title [
+   set headerCell [ get element, call th ]
+   get tableHeader appendChild, call [
+    get headerCell
+   ]
+   set [ get headerCell ] textContent [
+    get title
+   ]
+  ]
+ ]
+ get sessions, map [
+  function session [
+   get session, true [
+    set tableRow [ get element, call tr ]
+    get table appendChild, call [ get tableRow ]
+    set cell [
+     function content [
+      set tableCell [ get element, call td ]
+      set [ get tableCell ] textContent [
+       get content
+      ]
+      get tableRow appendChild, call [
+       get tableCell
+      ]
+     ]
+    ]
+    get cell
+    do [ call [ get session agent ] ]
+    do [ call [
+     get Date, new [ get session created ]
+     at toLocaleString, call
+    ] ]
+    do [ call [
+     get session key, at substring, call 0 10
+    ] ]
+    set actionCell [ get element, call td ]
+    get tableRow appendChild, call [
+     get actionCell
+    ]
+    set deleteButton [ get element, call button ]
+    get actionCell appendChild, call [
+     get deleteButton
+    ]
+    get session current, true [
+     set [ get deleteButton ] textContent Current
+     get deleteButton setAttribute
+     call disabled disabled
+    ], false [
+     set [ get deleteButton ] textContent Delete
+     get deleteButton addEventListener
+     call click [
+      function [
+       get tmiClient, call session:delete [
+        object [
+         key [ get session key ]
+        ]
+       ], false [
+        get alert, call 'Something went wrong'
+       ], true [
+        get table removeChild
+        call [ get tableRow ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  ]
+ ]
+]

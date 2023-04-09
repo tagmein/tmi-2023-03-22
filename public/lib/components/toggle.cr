@@ -8,8 +8,13 @@ function label onChange initialValue [
   set rules '
    & {
     align-items: center;
+    cursor: pointer;
     display: flex;
     padding: 0 15px;
+   }
+
+   &:hover {
+    background-color: #686868;
    }
   '
   get style, point
@@ -25,7 +30,6 @@ function label onChange initialValue [
    & {
     display: inline-flex;
     align-items: center;
-    cursor: pointer;
     user-select: none;
    }
   '
@@ -50,7 +54,7 @@ function label onChange initialValue [
   set name toggleHandle
   set rules '
    & {
-    background-color: #4CAF50;
+    background-color: #393939;
     border-radius: 15px;
     height: 30px;
     position: relative;
@@ -91,6 +95,7 @@ function label onChange initialValue [
     height: 30px;
     line-height: 1.8;
     margin-left: 10px;
+    pointer-events: none;
    }
   '
   get style, point
@@ -104,7 +109,7 @@ function label onChange initialValue [
   at [ get toggleHandle ] classList add, call checked
  ]
 
- at [ get toggleContainer ] addEventListener, call click [
+ at [ get outerContainer ] addEventListener, call click [
   function [
    set [ get isChecked ] current [ get isChecked current, not ]
    at [ get isChecked current ]

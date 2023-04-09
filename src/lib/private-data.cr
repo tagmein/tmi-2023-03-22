@@ -4,26 +4,45 @@ function key [
  set encodedKey [
   get encode, call [ get key ]
  ]
- log [ get encodedKey ]
  object [
-  read [
-   function value [
-    set stringValue [
-     get JSON stringify, call [ get value ]
-    ]
+  delete [
+   function [
     promise [
      function resolve reject [
       set dataFile [
        at [ get path ] join,
-       call [ get privateBase ] [ get encodedKey ]
+       call [ get privateBase ] data [ get encodedKey ]
       ]
       set complete [
-       function err data [
+       function err [
+        get err, true [
+         at [ get resolve ], call undefined
+        ], false [
+         at [ get resolve ], call true
+        ]
+       ]
+      ]
+      get fileSystem unlink
+      call [ get dataFile ] [ get complete ]
+     ]
+    ]
+   ]
+  ]
+  read [
+   function [
+    promise [
+     function resolve reject [
+      set dataFile [
+       at [ get path ] join,
+       call [ get privateBase ] data [ get encodedKey ]
+      ]
+      set complete [
+       function err stringValue [
         get err, true [
          at [ get resolve ], call undefined
         ], false [
          at [ get resolve ], call [
-          get JSON parse, call data
+          get JSON parse, call [ get stringValue ]
          ]
         ]
        ]
@@ -43,7 +62,7 @@ function key [
      function resolve reject [
       set dataFile [
        at [ get path ] join,
-       call [ get privateBase ] [ get encodedKey ]
+       call [ get privateBase ] data [ get encodedKey ]
       ]
       set complete [
        function err [

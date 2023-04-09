@@ -2,7 +2,7 @@ set respondWithJson [
  function data [
   set [ get response ] statusCode 200
   do [
-   at [ get response ]
+   get response
    do [ at setHeader, call Content-Type application/json ]
    do [
     at end, call [
@@ -18,13 +18,11 @@ set currentSession [
   get request headers x-tmi-api-key
  ]
 ]
+
 get currentSession, true [
- set accountData [
-  get privateData, call [ 
-   template account:%0 [ get currentSession email ]
-  ]
- ]
  get respondWithJson, call [
-  get accountData read, call
+  get session delete, call [ get currentSession email ] [
+   get requestBody key
+  ]
  ]
 ], false [ get respondWithJson, call null ]
