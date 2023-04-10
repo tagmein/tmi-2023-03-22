@@ -1,0 +1,30 @@
+<style>
+ body {
+  color: #f0f0f0;
+  padding: 0 20px;
+  font-size: 18px;
+  line-height: 1.65;
+ }
+ pre {
+  font-size: inherit;
+  white-space: pre-wrap;
+ }
+ a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid;
+ }
+ li {
+  margin-bottom: 15px;
+ }
+</style>
+<h1>About Tag Me In</h1>
+<p>Tag Me In was started as a conceptual HTML + CSS + JavaScript website editor and has evolved since 2021.</p>
+<p>Past versions:</p>
+<ul>
+ <li><a href="https://b.tagme.in/" target="_blank">Feb 2nd, 2023</a> - a collaboratively edited public dictionary</li>
+ <li><a href="https://c.tagme.in/" target="_blank">Feb 10th, 2023</a> - a private social network with a feed</li>
+ <li><a href="https://d.tagme.in/" target="_blank">Feb 21st, 2023</a> - a public social network with threads</li>
+ <li><a href="https://e.tagme.in/" target="_blank">Mar 11th, 2023</a> - channel-based content hosting with files and folders</li>
+ <li><a href="https://tagme.in/" target="_blank">Mar 22nd, 2023</a> - channel-based content hosting with nodes, CrownScript support (this version)</li>
+</ul>

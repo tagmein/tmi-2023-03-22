@@ -1,26 +1,43 @@
 
+Tag Me In development to do list
+
 API
-- list all channels at path
-- permissions
+• permissions
 
-Nodes
-- rename
-- move
-- clone
-- copy to channel
-- delete
+Channels
+• Remember channel button when viewing a channel you haven't remembered
+• Edit channel name
+• Show channel name in switcher when viewing a channel without having it remembered, or when not signed in
+• Organize remembered channels by owner email/name
 
-Runtime
-- load relative CrownScript files with ./file.cr
-- plain text -> markdown
-
-Interface
-- error message if couldn't save
-- saving indicator while saving
-- loading indicator while loading
-- enter to create new node
-- mobile view
-- launch full screen view in new tab
+CrownScript
+• Keep track of stack for better error messages
+• Remember names of variables for better error messages
+• Error handling
+• Single-branch conditionals
 
 Examples
-- todo app with permission request to read + write to ./data.json
+• todo app with permission request to read + write to ./data.json
+
+Interface
+• error message if couldn't save
+• saving indicator while saving
+• loading indicator while loading
+• enter to create new node
+• mobile view
+• launch full screen view in new tab
+• hide create node if logged out or no permissions on channel
+
+Nodes
+• rename
+• move
+• clone
+• copy to channel
+• delete
+
+Profile
+• Edit profile name
+
+Runtime
+• load relative CrownScript files with ./file.cr
+• plain text -> markdown
