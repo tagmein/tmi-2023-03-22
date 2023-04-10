@@ -38,6 +38,11 @@ set createNode [
  ]
 ]
 
+set channelKey [
+ get requestParams path split, call /
+ at [ current ] 0
+]
+
 set channelGroup [
  set output [ list ]
  at [ get requestParams path ] split, call /

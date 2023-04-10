@@ -187,6 +187,18 @@ set channelsWithPath [
     ]
    ]
   ]
+  get channelKey, is tagmein, false [
+   get resultChannels current, filter [
+    function testChannel [
+     get testChannel key, is [ get channelKey ]
+    ]
+   ], at length, is 0, true [
+    get resultChannels current push, call [
+     get channelTools byKey
+     call [ get channelKey ]
+    ]
+   ]
+  ]
   get resultChannels current
  ]
 ]
