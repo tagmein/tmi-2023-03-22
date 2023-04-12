@@ -102,9 +102,13 @@ set route [
    ] [ get getChannel, call ]
    get surface setNodes, call [
     get responseData nodes
+   ] [
+    get responseData permissions
    ]
    get surface setValue, call [
     get responseData value
+   ] [
+    get responseData permissions
    ]
    get toolbar refreshAccountLink, call
   ]

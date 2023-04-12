@@ -244,8 +244,11 @@ list [ change, keyup ], each [
  function eventType [
   at [ get valueEditor ] addEventListener, call [ get eventType ] [
    function [
-    get renderPreviewDebounced, call
-    get saveEditorChangesDebounced, call
+    get valueEditor getAttribute
+    call readonly, is readonly, false [
+     get renderPreviewDebounced, call
+     get saveEditorChangesDebounced, call
+    ]
    ]
   ]
  ]
@@ -401,7 +404,7 @@ at [ get build ], call [ get newNodeContainer ] [ get createButton ]
 
 object [
  setNodes [
-  function nodes [
+  function nodes permissions [
    set segments [ get getPathSegments, call ]
    set [ get nodeList ] innerHTML ''
    set rootLink [
@@ -462,16 +465,23 @@ object [
      at [ get build ], call [ get nodeList ] [ get nodeLink ]
     ]
    ]
-   at [ get build ], call [ get nodeList ] [ get newNodeContainer ]
+   get permissions edit, true [
+    at [ get build ], call [ get nodeList ] [ get newNodeContainer ]
+   ]
   ]
  ]
  setValue [
-  function value [
+  function value permissions [
    set [ get loadedHash ] current [
     get location hash,
     at substring, call 1
    ]
    set [ get valueEditor ] value [ get value ]
+   get permissions edit, true [
+    get valueEditor removeAttribute, call readonly
+   ], false [
+    get valueEditor setAttribute, call readonly readonly
+   ]
    at [ get renderPreview ], call
   ]
  ]

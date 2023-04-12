@@ -211,16 +211,34 @@ set channelsWithPath [
  ]
 ]
 
+set permissions [ object ]
+get currentSession, true [
+ get channelGroup, is system, true [
+  set [ get permissions ] edit [
+   get currentSession email, is hello@nateferrero.com
+  ]
+ ], false [
+  set [ get permissions ] edit [
+   get channelTools byKey
+   call [ get channelKey ]
+   at owner, is [ get currentSession email ]
+  ]
+ ]
+], false [
+ set [ get permissions ] edit false
+]
+
 get respondWithJson, call [
  object [
+  permissions [ get permissions ]
   value [
-   at [ get readValue ], call [ get searchPath ]
+   get readValue, call [ get searchPath ]
   ]
   channels [
    get channelsWithPath, call [ get relativeNodePath ]
   ]
   nodes [
-   at [ get readDirectories ], call [ get searchPath ]
+   get readDirectories, call [ get searchPath ]
   ]
  ]
 ]
