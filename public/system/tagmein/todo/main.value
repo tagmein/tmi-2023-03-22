@@ -3,18 +3,42 @@ Tag Me In development to do list
 
 API
 • permissions
+   • List channels
+   • Manage collected channels
+   • Read files (optionally scoped to a channel / folder)
+   • Write files (optionally scoped to a channel / folder)
 
 Channels
 • Remember channel button when viewing a channel you haven't remembered
+• Ability to archive a channel to remove it from the channel selector without completely losing access to the channel
 • Edit channel name
 • Show channel name in switcher when viewing a channel without having it remembered, or when not signed in
 • Organize remembered channels by owner email/name
+• Ability to see a log of all recent changes to a channel (channel history feed) showing which files and folders were edited
+• Get notified of channel updates
 
-Crown
+Collaboration
+• Ability to invite someone to become a collaborator on a channel
+• Ability to view channel collaborators
+• Ability to see real time updates when viewing a folder or file when another user is editing
+
+Crown Language
 • Keep track of stack for better error messages
 • Remember names of variables for better error messages
 • Error handling
 • Single-branch conditionals
+set message [
+ when [ get quantity ] [
+  > 5 Many # get quantity, > 5, true [ value Many ]
+  is 4 Four
+  is 3 Three
+  is 2 Two
+  is 1 One
+  get english None
+  get vietnamese Khong
+  None
+ ]
+]
 
 Examples
 • todo app with permission request to read + write to ./data.json
@@ -27,6 +51,9 @@ Interface
 • mobile view
 • launch full screen view in new tab
 • hide create node if logged out or no permissions on channel
+• propagate node titles to browser tab
+• "Launch" link to view content as full screen without TMI interface elements
+• When editing, confirm save when navigating away with unsaved changes
 
 Nodes
 • rename
@@ -34,10 +61,15 @@ Nodes
 • clone
 • copy to channel
 • delete
+• attach files to a node
 
 Profile
-• Edit profile name
+• Ability to change my display name
+• Ability to write a short bio
+• Ability to add a profile picture
 
 Runtime
 • load relative Crown files with ./file.cr
+• HTML: Inject base href when rendering for relative file inclusion
+• load relative CrownScript files with ./file.cr
 • plain text -> markdown
