@@ -56,13 +56,17 @@ set getPathSegments [
 ]
 
 set switchChannel [
- function newChannel [
-  set segments [
-   get location hash split, call /
-  ]
-  set [ get segments ] 0 [ get newChannel ]
-  set [ get location ] hash [
-   get segments join, call /
+ function newChannel maintainPath [
+  get maintainPath, true [
+   set segments [
+    get location hash split, call /
+   ]
+   set [ get segments ] 0 [ get newChannel ]
+   set [ get location ] hash [
+    get segments join, call /
+   ]
+  ], false [
+   set [ get location ] hash [ get newChannel ]
   ]
  ]
 ]

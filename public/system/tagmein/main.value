@@ -17,11 +17,11 @@
 </style>
 <h1>Welcome to Tag Me In</h1>
 <pre>
-Tag Me In is a collaborative code editor that uses HTML, or a programming language called <a target="_top" href="/#tagmein/help/CrownScript">CrownScript</a>.
+Tag Me In is a collaborative code editor that uses HTML, or a programming language called <a target="_top" href="/#tagmein/help/Crown">Crown</a>.
 
 Happy coding!
 
 • HTML documents start with <
 • Plain text documents start with a blank line
-• All other documents are CrownScript
+• All other documents are Crown
 </pre>

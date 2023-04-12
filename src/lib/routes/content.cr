@@ -13,6 +13,10 @@ set respondWithJson [
  ]
 ]
 
+set tagMeInChannel [
+ object [ owner System, key tagmein, name 'Tag Me In' ]
+]
+
 set readDirectories [
  function searchPath [
   promise [
@@ -24,7 +28,7 @@ set readDirectories [
        at [ get resolve ], call [ get directories ]
       ]
       false [
-       each [ get items ] [
+       get items, each [
         function item [
          promise [
           function resolve2 reject2 [
@@ -167,23 +171,17 @@ set channelsWithPath [
   get currentSession, true [
    set [ get resultChannels ] current [
     list [
-     [ object [ key tagmein, name 'Tag Me In' ] ]
+     [ get tagMeInChannel ]
     ]
     at concat, call [
      get channelTools list
      call [ get currentSession email ]
     ]
-    filter [
-     function testChannel [
-      get channelHasPath
-      call [ get testChannel key ] [ get relativePath ]
-     ]
-    ]
    ]
   ], false [
    set [ get resultChannels ] current [
     list [
-     [ object [ key tagmein, name 'Tag Me In' ] ]
+     [ get tagMeInChannel ]
     ]
    ]
   ]
@@ -200,6 +198,16 @@ set channelsWithPath [
    ]
   ]
   get resultChannels current
+  each [
+   function testChannel [
+    get channelHasPath
+    call [ get testChannel key ] [ get relativePath ]
+    true [
+     set [ get testChannel ] hasCurrent true
+    ]
+    get testChannel
+   ]
+  ]
  ]
 ]
 

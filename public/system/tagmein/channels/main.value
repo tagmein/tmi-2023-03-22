@@ -66,13 +66,13 @@ get channels, false [
  get document body appendChild, call [ get table ]
  set tableHeader [ get element, call tr ]
  get table appendChild, call [ get tableHeader ]
- each [ list [
+ list [
   Name
   Owner
   Created
   Key
   Action
- ] ] [
+ ], each [
   function title [
    set headerCell [ get element, call th ]
    get tableHeader appendChild, call [

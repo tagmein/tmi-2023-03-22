@@ -240,7 +240,7 @@ set saveEditorChangesDebounced [
  get debounce, call [ get saveEditorChanges ]
 ]
 
-each [ list [ change, keyup ] ] [
+list [ change, keyup ], each [
  function eventType [
   at [ get valueEditor ] addEventListener, call [ get eventType ] [
    function [
@@ -363,15 +363,31 @@ set createNewNode [
   ]
   get responseData success, true [
    set [ get newNodeInput ] value ''
+  ], false [
+   get alert, call 'Unable to create node, maybe it exists?'
   ]
-  at [ get route ], call
+  get route, call
+ ]
+]
+
+at [ get newNodeInput ] addEventListener, call keypress [
+ function event [
+  get event key, is Enter, true [
+    get newNodeInput value length, is 0, true [
+    get alert, call 'Name cannot be empty'
+   ], false [
+    at [ get createNewNode ], call [
+      get newNodeInput value
+    ]
+   ]
+  ]
  ]
 ]
 
 at [ get createButton ] addEventListener, call click [
  function [
   get newNodeInput value length, is 0, true [
-   at [ get alert ], call 'Name cannot be empty'
+   get alert, call 'Name cannot be empty'
   ], false [
    at [ get createNewNode ], call [
     get newNodeInput value
@@ -403,7 +419,7 @@ object [
    ]
    set [ get rootLink ] textContent Home
    at [ get build ], call [ get nodeList ] [ get rootLink ]
-   each [ get segments ] [
+   get segments, each [
     function segment index [
      set parentLink [
       at [ get element ], call a
@@ -429,7 +445,7 @@ object [
      at [ get build ], call [ get nodeList ] [ get parentLink ]
     ]
    ]
-   each [ get nodes ] [
+   get nodes, each [
     function node [
      set nodeLink [
       at [ get element ], call a

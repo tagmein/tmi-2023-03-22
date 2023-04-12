@@ -146,7 +146,10 @@ do [ call [ get document body ] [ get toolbar ] ]
 at [ get channelSelectHidden ] addEventListener, call change [
  function [
   at [ get switchChannel ], call [
-   at [ get channelSelectHidden ] value
+   get channelSelectHidden value
+  ] [
+   get channelSelectHidden selectedOptions 0 getAttribute
+   call data-has-current, is yes
   ]
  ]
 ]
@@ -156,21 +159,39 @@ object [
  setChannels [
   function channels selectedChannel [
    set [ get channelSelectHidden ] innerHTML ''
-   each [ get channels ] [
-    function channel [
-     set option [
-      at [ get element ], call option
+   get channels, group [ at owner ], entries [
+    function groupName channelsInGroup [
+     set groupElement [
+      at [ get element ], call optgroup
      ]
-     set [ get option ] value [ get channel key ]
-     set [ get option ] textContent [ get channel name ]
-     do [
-      get selectedChannel, is [ get option value ]
-      true [
-       set [ get option ] selected true
-       set [ get channelSelectLabel ] textContent [ get channel name ]
+     get groupElement setAttribute, call label [
+      get groupName
+     ]
+     get build
+     call [ get channelSelectHidden ] [ get groupElement ]
+     get channelsInGroup, each [
+      function channel [
+       set option [ get element, call option ]
+       set [ get option ] value [ get channel key ]
+       get selectedChannel, is [ get option value ], true [
+        get option setAttribute, call selected selected
+        set [ get channelSelectLabel ] textContent [ get channel name ]
+       ]
+       get channel hasCurrent, true [
+        set [ get option ] textContent [
+         template '%0 ✓' [ get channel name ]
+        ]
+        get option setAttribute, call data-has-current yes
+       ], false [
+        set [ get option ] textContent [
+         get channel name
+        ]
+        get option setAttribute, call data-has-current no
+       ]
+       get build
+       call [ get groupElement ] [ get option ]
       ]
      ]
-     at [ get build ], call [ get channelSelectHidden ] [ get option ]
     ]
    ]
   ]

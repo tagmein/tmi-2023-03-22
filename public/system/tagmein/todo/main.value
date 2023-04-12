@@ -10,7 +10,7 @@ Channels
 • Show channel name in switcher when viewing a channel without having it remembered, or when not signed in
 • Organize remembered channels by owner email/name
 
-CrownScript
+Crown
 • Keep track of stack for better error messages
 • Remember names of variables for better error messages
 • Error handling
@@ -39,5 +39,5 @@ Profile
 • Edit profile name
 
 Runtime
-• load relative CrownScript files with ./file.cr
+• load relative Crown files with ./file.cr
 • plain text -> markdown
