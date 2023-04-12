@@ -5,15 +5,15 @@ function callback delay [
   ]
  ]
  function args [
-  at [ get state ] timeoutId, is null, false [
-   at [ get clearTimeout ], call [
-    at [ get state ] timeoutId
+  get state timeoutId, is null, false [
+   get clearTimeout, call [
+    get state timeoutId
    ]
   ]
   set [ get state ] timeoutId [
-   at [ get setTimeout ], call [
+   get setTimeout, call [
     function [
-     at [ get callback ], call [ get args ]
+     get callback, call [ get args ]
      set [ get state ] timeoutId null
     ]
    ] [ get delay, default 1000 ]

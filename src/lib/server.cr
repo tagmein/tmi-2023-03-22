@@ -32,14 +32,14 @@ set port [
 # define base private path
 set privateBase [
  set root [ at __dirname ]
- at [ get path ] join
+ get path join
  call [ get root ] .. private
 ]
 
 # define base public path
 set publicBase [
  set root [ at __dirname ]
- at [ get path ] join
+ get path join
  call [ get root ] .. public
 ]
 
@@ -80,14 +80,13 @@ set parseRequestBody [
 set agent [
  function request response [
   set requestUrl [ 
-   at [ get request ] url
+   get request url
   ]
   set requestMethod [
-   at [ get request ] method
+   get request method
   ]
   set splitUrl [
-   at [ get requestUrl ] split
-   call ?
+   get requestUrl split, call ?
   ]
   set requestPath [ get splitUrl 0 ]
   set requestParams [
@@ -121,7 +120,7 @@ set server [
 ]
 
 # start server
-at [ get server ] listen
+get server listen
 call [ get port ] [ get host ] [
  function [
   log [

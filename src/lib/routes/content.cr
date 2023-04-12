@@ -2,7 +2,7 @@ set respondWithJson [
  function data [
   set [ get response ] statusCode 200
   do [
-   at [ get response ]
+   get response
    do [ at setHeader, call Content-Type application/json ]
    do [
     at end, call [
@@ -25,7 +25,7 @@ set readDirectories [
     set readdirCallback [
      function err items [
       get err, true [
-       at [ get resolve ], call [ get directories ]
+       get resolve, call [ get directories ]
       ]
       false [
        get items, each [
@@ -33,21 +33,21 @@ set readDirectories [
          promise [
           function resolve2 reject2 [
            set itemPath [
-            at [ get path ] join,
+            get path join,
             call [ get searchPath ] [ get item ]
            ]
-           at [ get fileSystem ] stat
+           get fileSystem stat
            call [ get itemPath ] [
             function err stats [
              get err, true [
-              at [ get reject2 ], call [ get err ]
+              get reject2, call [ get err ]
              ]
              false [
-              at [ get stats ] isDirectory, call
+              get stats isDirectory, call
               true [
-               at [ get directories ] push, call [ get item ]
+               get directories push, call [ get item ]
               ]
-              at [ get resolve2 ], call
+              get resolve2, call
              ]
             ]
            ]
@@ -56,10 +56,10 @@ set readDirectories [
         ]
        ]
       ]
-      at [ get resolve ], call [ get directories ]
+      get resolve, call [ get directories ]
      ]
     ]
-    at [ get fileSystem ] readdir
+    get fileSystem readdir
     call [ get searchPath ] [ get readdirCallback ]
    ]
   ]
@@ -71,20 +71,20 @@ set readValue [
   promise [
    function resolve reject [
     set mainFilePath [
-     at [ get path ] join,
+     get path join,
      call [ get searchPath ] main.value
     ]
     set readFileCallback [
      function err data [
       get err, true [
-       at [ get resolve ], call ''
+       get resolve, call ''
       ]
       false [
-       at [ get resolve ], call [ get data ]
+       get resolve, call [ get data ]
       ]
      ]
     ]
-    at [ get fileSystem ] readFile
+    get fileSystem readFile
     call [ get mainFilePath ] utf8 [ get readFileCallback ]
    ]
   ]
@@ -95,7 +95,7 @@ set pathExists [
  function searchPath [
   promise [
    function resolve [
-    at [ get fileSystem ] exists
+    get fileSystem exists
     call [ get searchPath ] [ get resolve ]
    ]
   ]
@@ -127,11 +127,11 @@ set channelGroup [
  false [
   set [ get output ] 0 data
  ]
- at [ get output ] 0
+ get output 0
 ]
 
 set searchPath [
- at [ get path ] join
+ get path join
  call [ get publicBase ] [ get channelGroup ] [ get requestParams path ]
 ]
 
@@ -152,7 +152,7 @@ set channelHasPath [
    false [
     set [ get output ] 0 data
    ]
-   at [ get output ] 0
+   get output 0
   ]
   get pathExists, call [
    get path join

@@ -1,8 +1,6 @@
-set toolbar [
- at [ get element ], call
-]
+set toolbar [ get element, call ]
 
-at [ get toolbar ] classList add, call [
+get toolbar classList add, call [
  set name toolbar
  set rules '
   & {
@@ -36,11 +34,9 @@ at [ get toolbar ] classList add, call [
  get style, point
 ]
 
-set channelSelect [
- at [ get element ], call
-]
+set channelSelect [ get element, call ]
 
-at [ get channelSelect ] classList add, call [
+get channelSelect classList add, call [
  set name channelSelect
  set rules '
   & {
@@ -52,11 +48,9 @@ at [ get channelSelect ] classList add, call [
  get style, point
 ]
 
-set channelSelectLabel [
- at [ get element ], call
-]
+set channelSelectLabel [ get element, call ]
 
-at [ get channelSelectLabel ] classList add, call [
+get channelSelectLabel classList add, call [
  set name channelSelectLabel
  set rules '
   & {
@@ -67,10 +61,10 @@ at [ get channelSelectLabel ] classList add, call [
 ]
 
 set channelSelectHidden [
- at [ get element ], call select
+ get element, call select
 ]
 
-at [ get channelSelectHidden ] classList add, call [
+get channelSelectHidden classList add, call [
  set name channelSelectHidden
  set rules '
   & {
@@ -90,37 +84,34 @@ set updateBodyShowEditor [
  function showEditor [
   get showEditor
   true [
-   at [ get body ] classList add, call show-editor
+   get body classList add, call show-editor
   ]
   false [
-   at [ get body ] classList remove, call show-editor
+   get body classList remove, call show-editor
   ]
  ]
 ]
 
 set initialShowEditor [
- at [ get localStorage ] getItem, call showEditor, is 'true'
+ get localStorage getItem, call showEditor, is 'true'
 ]
 
-at [ get updateBodyShowEditor ], call [ get initialShowEditor ]
+get updateBodyShowEditor, call [ get initialShowEditor ]
 
 set editorToggle [
  # todo: set basePath correctly for modules loaded in browser
  load ./lib/components/toggle.cr, point, call 'Show editor' [
   function editorEnabled [
-   at [ get localStorage ] setItem, call showEditor [
-    at [ get editorEnabled ] toString, call
+   get localStorage setItem, call showEditor [
+    get editorEnabled toString, call
    ]
-   at [ get updateBodyShowEditor ], call [ get editorEnabled ]
+   get updateBodyShowEditor, call [ get editorEnabled ]
   ]
  ] [ get initialShowEditor ]
 ]
 
-set spacer [
- at [ get element, call ]
-]
-
-at [ get spacer ] classList add, call [
+set spacer [ get element, call ]
+get spacer classList add, call [
  set name spacer
  set rules '
   & {
@@ -134,7 +125,7 @@ set accountLink [
  load ./lib/components/account-link.cr, point
 ]
 
-at [ get build ]
+get build
 do [ call [ get toolbar ]       [ get channelSelect ] ]
 do [ call [ get toolbar ]       [ get editorToggle ] ]
 do [ call [ get toolbar ]       [ get spacer ] ]
@@ -143,9 +134,9 @@ do [ call [ get channelSelect ] [ get channelSelectLabel ] ]
 do [ call [ get channelSelect ] [ get channelSelectHidden ] ]
 do [ call [ get document body ] [ get toolbar ] ]
 
-at [ get channelSelectHidden ] addEventListener, call change [
+get channelSelectHidden addEventListener, call change [
  function [
-  at [ get switchChannel ], call [
+  get switchChannel, call [
    get channelSelectHidden value
   ] [
    get channelSelectHidden selectedOptions 0 getAttribute
@@ -162,7 +153,7 @@ object [
    get channels, group [ at owner ], entries [
     function groupName channelsInGroup [
      set groupElement [
-      at [ get element ], call optgroup
+      get element, call optgroup
      ]
      get groupElement setAttribute, call label [
       get groupName

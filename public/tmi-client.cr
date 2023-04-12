@@ -3,7 +3,7 @@ set messageResolversById [ object ]
 set messageRejectersById [ object ]
 
 function tmiClientSource tmiClientTarget [
- at [ get tmiClientSource ] addEventListener, call message [
+ get tmiClientSource addEventListener, call message [
   function message [
    log tmi-client response: [ get message data ]
    at [ get messageResolversById ] [ get message data messageId ], call [
@@ -26,7 +26,7 @@ function tmiClientSource tmiClientTarget [
      ]
     ]
     log tmi-client request: [ get request ]
-    at [ get tmiClientTarget ] postMessage, call [ get request ]
+    get tmiClientTarget postMessage, call [ get request ]
    ]
   ]
  ]

@@ -1,4 +1,4 @@
-at [ get document ] body classList add, call [
+get document body classList add, call [
  set name body
  set rules '
   & {
@@ -38,4 +38,4 @@ at [ get document ] body classList add, call [
  get style, point
 ]
 
-at [ get document ] body removeAttribute, call style
+get document body removeAttribute, call style

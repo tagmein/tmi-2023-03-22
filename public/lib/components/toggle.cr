@@ -1,9 +1,9 @@
 function label onChange initialValue [
  set outerContainer [
-  at [ get element ], call div
+  get element, call div
  ]
 
- at [ get outerContainer ] classList add, call [
+ get outerContainer classList add, call [
   set name outerContainer
   set rules '
    & {
@@ -21,10 +21,10 @@ function label onChange initialValue [
  ]
 
  set toggleContainer [
-  at [ get element ], call div
+  get element, call div
  ]
 
- at [ get toggleContainer ] classList add, call [
+ get toggleContainer classList add, call [
   set name toggleContainer
   set rules '
    & {
@@ -36,7 +36,7 @@ function label onChange initialValue [
   get style, point
  ]
 
- at [ get build ], call [ get outerContainer ] [ get toggleContainer ]
+ get build, call [ get outerContainer ] [ get toggleContainer ]
 
  set isChecked [
   object [
@@ -47,10 +47,10 @@ function label onChange initialValue [
  ]
 
  set toggleHandle [
-  at [ get element ], call div
+  get element, call div
  ]
 
- at [ get toggleHandle ] classList add, call [
+ get toggleHandle classList add, call [
   set name toggleHandle
   set rules '
    & {
@@ -81,13 +81,13 @@ function label onChange initialValue [
   get style, point
  ]
 
- at [ get build ], call [ get toggleContainer ] [ get toggleHandle ]
+ get build, call [ get toggleContainer ] [ get toggleHandle ]
 
  set labelText [
-  at [ get element ], call label
+  get element, call label
  ]
 
- at [ get labelText ] classList add, call [
+ get labelText classList add, call [
   set name labelText
   set rules '
    & {
@@ -103,23 +103,21 @@ function label onChange initialValue [
 
  set [ get labelText ] textContent [ get label ]
 
- at [ get build ], call [ get outerContainer ] [ get labelText ]
+ get build, call [ get outerContainer ] [ get labelText ]
 
  get isChecked current, true [
-  at [ get toggleHandle ] classList add, call checked
+  get toggleHandle classList add, call checked
  ]
 
- at [ get outerContainer ] addEventListener, call click [
+ get outerContainer addEventListener, call click [
   function [
    set [ get isChecked ] current [ get isChecked current, not ]
-   at [ get isChecked current ]
-   true [
-    at [ get toggleHandle ] classList add, call checked
+   get isChecked current, true [
+    get toggleHandle classList add, call checked
+   ], false [
+    get toggleHandle classList remove, call checked
    ]
-   false [
-    at [ get toggleHandle ] classList remove, call checked
-   ]
-   at [ get onChange ], call [ get isChecked current ]
+   get onChange, call [ get isChecked current ]
   ]
  ]
 

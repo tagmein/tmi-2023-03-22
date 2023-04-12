@@ -10,15 +10,15 @@ function key [
     promise [
      function resolve reject [
       set dataFile [
-       at [ get path ] join,
+       get path join,
        call [ get privateBase ] data [ get encodedKey ]
       ]
       set complete [
        function err [
         get err, true [
-         at [ get resolve ], call undefined
+         get resolve, call undefined
         ], false [
-         at [ get resolve ], call true
+         get resolve, call true
         ]
        ]
       ]
@@ -33,21 +33,21 @@ function key [
     promise [
      function resolve reject [
       set dataFile [
-       at [ get path ] join,
+       get path join,
        call [ get privateBase ] data [ get encodedKey ]
       ]
       set complete [
        function err stringValue [
         get err, true [
-         at [ get resolve ], call undefined
+         get resolve, call undefined
         ], false [
-         at [ get resolve ], call [
+         get resolve, call [
           get JSON parse, call [ get stringValue ]
          ]
         ]
        ]
       ]
-      at [ get fileSystem ] readFile
+      get fileSystem readFile
       call [ get dataFile ] utf8 [ get complete ]
      ]
     ]
@@ -61,19 +61,19 @@ function key [
     promise [
      function resolve reject [
       set dataFile [
-       at [ get path ] join,
+       get path join,
        call [ get privateBase ] data [ get encodedKey ]
       ]
       set complete [
        function err [
         get err, true [
-         at [ get resolve ], call false
+         get resolve, call false
         ], false [
-         at [ get resolve ], call true
+         get resolve, call true
         ]
        ]
       ]
-      at [ get fileSystem ] writeFile
+      get fileSystem writeFile
       call [ get dataFile ] [ get stringValue ] utf8 [ get complete ]
      ]
     ]

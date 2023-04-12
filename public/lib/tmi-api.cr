@@ -5,7 +5,7 @@ function url data [
  set apiResponse [ object ]
  get data, true [
   set response [
-   at [ get fetch ], call [
+   get fetch, call [
     template %0%1 /api [ get url ]
    ] [
     object [
@@ -17,14 +17,14 @@ function url data [
       ]
      ]
      body [
-      at [ get JSON ] stringify, call [ get data ]
+      get JSON stringify, call [ get data ]
      ]
     ]
    ]
   ]
   get response ok, true [
    set [ get apiResponse ] current [
-    at [ get response ] json, call
+    get response json, call
    ]
   ], false [
    log API request failed [ get url ] [ get data ] [
@@ -33,7 +33,7 @@ function url data [
   ]
  ], false [
   set response [
-   at [ get fetch ], call [
+   get fetch, call [
     template %0%1 /api [ get url ]
    ] [
     object [
@@ -48,7 +48,7 @@ function url data [
   ]
   get response ok, true [
    set [ get apiResponse ] current [
-    at [ get response ] json, call
+    get response json, call
    ]
   ], false [
    log API request failed [ get url ] [ get data ] [

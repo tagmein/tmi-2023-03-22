@@ -2,7 +2,7 @@ set respondWithJson [
  function data [
   set [ get response ] statusCode 200
   do [
-   at [ get response ]
+   get response
    do [ at setHeader, call Content-Type application/json ]
    do [
     at end, call [

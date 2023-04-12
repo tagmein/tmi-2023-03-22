@@ -1,15 +1,14 @@
 set linkElement [
- at [ get element, call a ]
+ get element, call a
 ]
 
-at [ get linkElement ] setAttribute, call href '/#tagmein/account'
+get linkElement setAttribute, call href '/#tagmein/account'
 
 set refresh [
  function [
   set account [
-   at [ get tmiOperator ], call account:get
+   get tmiOperator, call account:get
   ]
-
   get account, true [
    set [ get linkElement ] textContent [
     get account name,

@@ -1,8 +1,8 @@
 set surface [
- at [ get element ], call div
+ get element, call div
 ]
 
-at [ get surface ] classList add, call [
+get surface classList add, call [
  set name surface
  set rules '
   & {
@@ -16,10 +16,10 @@ at [ get surface ] classList add, call [
 ]
 
 set nodeList [
- at [ get element ], call
+ get element, call
 ]
 
-at [ get nodeList ] classList add, call [
+get nodeList classList add, call [
  set name nodeList
  set rules '
   & {
@@ -79,10 +79,10 @@ at [ get nodeList ] classList add, call [
 ]
 
 set valueEditor [
- at [ get element ], call textarea
+ get element, call textarea
 ]
 
-at [ get valueEditor ] classList add, call [
+get valueEditor classList add, call [
  set name valueEditor
  set rules '
   & {
@@ -108,10 +108,10 @@ at [ get valueEditor ] classList add, call [
 ]
 
 set previewFrame [
- at [ get element ], call iframe
+ get element, call iframe
 ]
 
-at [ get previewFrame ] classList add, call [
+get previewFrame classList add, call [
  set name previewFrame
  set rules '
   & {
@@ -158,9 +158,8 @@ set renderPreview [
 </body>
 
 </html>' [
-     at [ get JSON ] stringify, call [
-      at [ get valueEditor value ] substring,
-      call 1
+     get JSON stringify, call [
+      get valueEditor value substring, call 1
      ]
     ]
    ]
@@ -200,11 +199,11 @@ set renderPreview [
 </body>
 
 </html>' [
-      at [ get JSON ] stringify, call [
-       at [ get location ] origin
+      get JSON stringify, call [
+       get location origin
       ]
      ] [
-      at [ get JSON ] stringify, call [
+      get JSON stringify, call [
        get valueEditor value
       ]
      ]
@@ -242,7 +241,7 @@ set saveEditorChangesDebounced [
 
 list [ change, keyup ], each [
  function eventType [
-  at [ get valueEditor ] addEventListener, call [ get eventType ] [
+  get valueEditor addEventListener, call [ get eventType ] [
    function [
     get valueEditor getAttribute
     call readonly, is readonly, false [
@@ -254,17 +253,17 @@ list [ change, keyup ], each [
  ]
 ]
 
-at [ get build ]
+get build
 do [ call [ get document body ] [ get surface ] ]
 do [ call [ get surface ] [ get nodeList ] ]
 do [ call [ get surface ] [ get valueEditor ] ]
 do [ call [ get surface ] [ get previewFrame ] ]
 
 set newNodeContainer [
- at [ get element ], call div
+ get element, call div
 ]
 
-at [ get newNodeContainer ] classList add, call [
+get newNodeContainer classList add, call [
  set name newNodeContainer
  set rules '
   & {
@@ -278,10 +277,10 @@ at [ get newNodeContainer ] classList add, call [
 ]
 
 set newNodeContainer [
- at [ get element ], call div
+ get element, call div
 ]
 
-at [ get newNodeContainer ] classList add, call [
+get newNodeContainer classList add, call [
  set name newNodeContainer
  set rules '
   & {
@@ -294,10 +293,10 @@ at [ get newNodeContainer ] classList add, call [
 ]
 
 set newNodeInput [
- at [ get element ], call input
+ get element, call input
 ]
 
-at [ get newNodeInput ] classList add, call [
+get newNodeInput classList add, call [
  set name newNodeInput
  set rules '
   & {
@@ -318,13 +317,13 @@ at [ get newNodeInput ] classList add, call [
  get style, point
 ]
 
-at [ get newNodeInput ] setAttribute, call placeholder 'New item name'
+get newNodeInput setAttribute, call placeholder 'New item name'
 
 set createButton [
- at [ get element ], call button
+ get element, call button
 ]
 
-at [ get createButton ] classList add, call [
+get createButton classList add, call [
  set name createButton
  set rules '
   & {
@@ -373,13 +372,13 @@ set createNewNode [
  ]
 ]
 
-at [ get newNodeInput ] addEventListener, call keypress [
+get newNodeInput addEventListener, call keypress [
  function event [
   get event key, is Enter, true [
     get newNodeInput value length, is 0, true [
     get alert, call 'Name cannot be empty'
    ], false [
-    at [ get createNewNode ], call [
+    get createNewNode, call [
       get newNodeInput value
     ]
    ]
@@ -387,20 +386,20 @@ at [ get newNodeInput ] addEventListener, call keypress [
  ]
 ]
 
-at [ get createButton ] addEventListener, call click [
+get createButton addEventListener, call click [
  function [
   get newNodeInput value length, is 0, true [
    get alert, call 'Name cannot be empty'
   ], false [
-   at [ get createNewNode ], call [
+   get createNewNode, call [
     get newNodeInput value
    ]
   ]
  ]
 ]
 
-at [ get build ], call [ get newNodeContainer ] [ get newNodeInput ]
-at [ get build ], call [ get newNodeContainer ] [ get createButton ]
+get build, call [ get newNodeContainer ] [ get newNodeInput ]
+get build, call [ get newNodeContainer ] [ get createButton ]
 
 object [
  setNodes [
@@ -408,11 +407,11 @@ object [
    set segments [ get getPathSegments, call ]
    set [ get nodeList ] innerHTML ''
    set rootLink [
-    at [ get element ], call a
+    get element, call a
    ]
-   at [ get rootLink ] setAttribute, call data-parent true
+   get rootLink setAttribute, call data-parent true
    get segments length, is 0, true [
-    at [ get rootLink ] setAttribute, call data-current true 
+    get rootLink setAttribute, call data-current true 
    ]
    set [ get rootLink ] href [
     template '/#%0' [
@@ -421,21 +420,21 @@ object [
     at replace, call [ regexp /$ ] ''
    ]
    set [ get rootLink ] textContent Home
-   at [ get build ], call [ get nodeList ] [ get rootLink ]
+   get build, call [ get nodeList ] [ get rootLink ]
    get segments, each [
     function segment index [
      set parentLink [
-      at [ get element ], call a
+      get element, call a
      ]
-     at [ get parentLink ] setAttribute, call data-parent true
+     get parentLink setAttribute, call data-parent true
      get index, is [ add -1 [ get segments length ]], true [
-       at [ get parentLink ] setAttribute, call data-current true 
+       get parentLink setAttribute, call data-current true 
      ]
      set [ get parentLink ] href [
       template '/#%0/%1' [
        get getChannel, call
       ] [
-       at [ get segments ] slice, call 0 [ 
+       get segments slice, call 0 [ 
         add 1 [ get index ]
        ]
        at join, call /
@@ -443,30 +442,30 @@ object [
       at replace, call [ regexp /$ ] ''
      ]
      set [ get parentLink ] textContent [
-      at [ get decode ], call [ get segment ]
+      get decode, call [ get segment ]
      ]
-     at [ get build ], call [ get nodeList ] [ get parentLink ]
+     get build, call [ get nodeList ] [ get parentLink ]
     ]
    ]
    get nodes, each [
     function node [
      set nodeLink [
-      at [ get element ], call a
+      get element, call a
      ]
-     at [ get nodeLink ] setAttribute, call data-child true
+     get nodeLink setAttribute, call data-child true
      set [ get nodeLink ] href [
       template /%0/%1 [
        get location hash
       ] [
-       at [ get encode ], call [ get node ]
+       get encode, call [ get node ]
       ]
      ]
      set [ get nodeLink ] textContent [ get node ]
-     at [ get build ], call [ get nodeList ] [ get nodeLink ]
+     get build, call [ get nodeList ] [ get nodeLink ]
     ]
    ]
    get permissions edit, true [
-    at [ get build ], call [ get nodeList ] [ get newNodeContainer ]
+    get build, call [ get nodeList ] [ get newNodeContainer ]
    ]
   ]
  ]
@@ -482,7 +481,7 @@ object [
    ], false [
     get valueEditor setAttribute, call readonly readonly
    ]
-   at [ get renderPreview ], call
+   get renderPreview, call
   ]
  ]
 ]

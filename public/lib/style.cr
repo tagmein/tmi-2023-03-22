@@ -9,17 +9,17 @@ set className [
 ]
 
 set styleElement [
- at [ get document ] createElement, call style
+ get document createElement, call style
 ]
 
 set [ get styleElement ] textContent [
- at [ get rules ] replace, call [
+ get rules replace, call [
   regexp & g
  ] [
   template .%0 [ get className ]
  ]
 ]
 
-at [ get document ] head appendChild, call [ get styleElement ]
+get document head appendChild, call [ get styleElement ]
 
-at [ get className ]
+get className
