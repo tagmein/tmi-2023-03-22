@@ -58,7 +58,15 @@ set channelGroup [
 
 set searchPath [
  get path join
- call [ get publicBase ] [ get channelGroup ] [ get requestParams path ]
+ call [ get publicBase ] [ get channelGroup ] [
+  get requestParams path split, call /
+  each [
+   function segment [
+    get encode, call [ get segment ]
+   ]
+  ]
+  at join, call /
+ ]
 ]
 
 set currentSession [

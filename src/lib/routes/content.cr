@@ -132,7 +132,15 @@ set channelGroup [
 
 set searchPath [
  get path join
- call [ get publicBase ] [ get channelGroup ] [ get requestParams path ]
+ call [ get publicBase ] [ get channelGroup ] [
+  get requestParams path split, call /
+  each [
+   function segment [
+    get encode, call [ get segment ]
+   ]
+  ]
+  at join, call /
+ ]
 ]
 
 set currentSession [
@@ -239,6 +247,11 @@ get respondWithJson, call [
   ]
   nodes [
    get readDirectories, call [ get searchPath ]
+   each [
+    function dirName [
+     get decode, call [ get dirName ]
+    ]
+   ]
   ]
  ]
 ]

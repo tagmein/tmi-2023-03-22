@@ -276,6 +276,77 @@ get newNodeContainer classList add, call [
  get style, point
 ]
 
+set filterNodesContainer [
+ get element, call div
+]
+
+get filterNodesContainer classList add, call [
+ set name filterNodesContainer
+ set rules '
+  & {
+   display: flex;
+   justify-content: center;
+   padding: 10px;
+  }
+ '
+ get style, point
+]
+
+set filterNodesInput [
+ get element, call input
+]
+
+get filterNodesInput classList add, call [
+ set name filterNodesInput
+ set rules '
+  & {
+   background-color: #5c5c5c;
+   border: none;
+   border-radius: 4px;
+   color: #e9e9e9;
+   font-size: 18px;
+   padding: 5px 10px;
+   outline: none;
+   width: 100%;
+  }
+
+  &::placeholder {
+   color: #9c9c9c;
+  }
+ '
+ get style, point
+]
+
+set filterNodesStyleTag [
+ get element, call style
+]
+
+get document head appendChild, call [
+ get filterNodesStyleTag
+]
+
+get filterNodesInput addEventListener, call keyup [
+ function event [
+  get event key, is Escape, true [
+    set [ get filterNodesInput ] value ''
+  ]
+  get filterNodesInput value, is '', true [
+   set [ get filterNodesStyleTag ] textContent ''
+  ], false [
+   set [ get filterNodesStyleTag ] textContent [
+    template '
+a[data-child="true"] { display: none; }
+a[data-child="true"][data-word*="%0"] { display: initial; }
+    ' [
+     get encode, call [ get filterNodesInput value ]
+    ]
+   ]
+  ]
+ ]
+]
+
+get build, call [ get filterNodesContainer ] [ get filterNodesInput ]
+
 set newNodeContainer [
  get element, call div
 ]
@@ -447,12 +518,28 @@ object [
      get build, call [ get nodeList ] [ get parentLink ]
     ]
    ]
+   get build, call [ get nodeList ] [ get filterNodesContainer ]
+   get nodes length, is 1, true [
+    get filterNodesInput setAttribute, call placeholder [
+      template 'Filter one item'
+    ]
+   ], false [
+    get filterNodesInput setAttribute, call placeholder [
+      template 'Filter %0 items' [ get nodes length ]
+    ]
+   ]
    get nodes, each [
     function node [
      set nodeLink [
       get element, call a
      ]
-     get nodeLink setAttribute, call data-child true
+     get nodeLink setAttribute
+     do [ call data-child true ]
+     do [
+      call data-word [
+       get encode, call [ get node ]
+      ]
+     ]
      set [ get nodeLink ] href [
       template /%0/%1 [
        get location hash

@@ -19,7 +19,9 @@ set createNode [
    function resolve reject [
     set newDirPath [
      get path join,
-     call [ get searchPath ] [ get nodeName ]
+     call [ get searchPath ] [
+      get encode, call [ get nodeName ]
+     ]
     ]
     set mkdirCallback [
      function err [
@@ -58,7 +60,15 @@ set channelGroup [
 
 set searchPath [
  get path join
- call [ get publicBase ] [ get channelGroup ] [ get requestParams path ]
+ call [ get publicBase ] [ get channelGroup ] [
+  get requestParams path split, call /
+  each [
+   function segment [
+    get encode, call [ get segment ]
+   ]
+  ]
+  at join, call /
+ ]
 ]
 
 set currentSession [
