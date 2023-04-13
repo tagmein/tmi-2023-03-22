@@ -52,6 +52,7 @@ set session [ load ./session.cr, point ]
 set routes [
  object [
   'GET /'                     [ load ./routes/index.cr ]
+  'GET /view'                 [ load ./routes/index.cr ]
   'GET /api/hello'            [ load ./routes/hello.cr ]
   'GET /api/account'          [ load ./routes/account-get.cr ]
   'POST /api/account/sign-in' [ load ./routes/account-sign-in.cr ]

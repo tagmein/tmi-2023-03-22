@@ -24,8 +24,12 @@ set debounce [ load ./lib/debounce.cr, point ]
 
 set build [
  function parent child [
-  get parent appendChild
-  call [ get child ]
+  get child, false [
+   log Missing child when appending to [ get parent ]
+  ], true [
+   get parent appendChild
+   call [ get child ]
+  ]
  ]
 ]
 
@@ -37,7 +41,7 @@ set element [
  ]
 ]
 
-set getChannel [
+set getChannelKey [
  function [
   at [
    get location hash substring, call 1
@@ -71,8 +75,16 @@ set switchChannel [
  ]
 ]
 
-set toolbar [
- at [ load ./lib/toolbar.cr ], point
+set isViewOnly [
+ get location pathname startsWith, call /view
+]
+
+set toolbar [ object ]
+
+get isViewOnly, false [
+ set [ get toolbar ] current [
+  at [ load ./lib/toolbar.cr ], point
+ ]
 ]
 
 set surface [
@@ -97,20 +109,38 @@ set route [
      ]
     ]
    ]
-   get toolbar setChannels, call [
-    get responseData channels
-   ] [ get getChannel, call ]
-   get surface setNodes, call [
-    get responseData nodes
-   ] [
-    get responseData permissions
+   set currentChannelKey [
+    get getChannelKey, call
+   ]
+   set currentChannel [
+    get responseData channels find, call [
+     function candidateChannel [
+      get candidateChannel key, is [
+       get currentChannelKey
+      ]
+     ]
+    ]
+   ]
+   get toolbar current, true [
+    get toolbar current setChannels, call [
+     get responseData channels
+    ] [ get currentChannelKey ]
+    get toolbar current refreshAccountLink, call
+   ]
+   get isViewOnly, false [
+    get surface setNodes, call [
+     get responseData nodes
+    ] [
+     get responseData permissions
+    ] [
+     get currentChannel
+    ]
    ]
    get surface setValue, call [
     get responseData value
    ] [
     get responseData permissions
    ]
-   get toolbar refreshAccountLink, call
   ]
  ]
 ]

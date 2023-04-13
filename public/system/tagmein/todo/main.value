@@ -23,6 +23,7 @@ Collaboration
 • Ability to see real time updates when viewing a folder or file when another user is editing
 
 Crown Language
+• Escape single quotes (how?)
 • Keep track of stack for better error messages
 • Remember names of variables for better error messages
 • Error handling
@@ -47,12 +48,7 @@ Interface
 • error message if couldn't save
 • saving indicator while saving
 • loading indicator while loading
-• enter to create new node
 • mobile view
-• launch full screen view in new tab
-• hide create node if logged out or no permissions on channel
-• propagate node titles to browser tab
-• "Launch" link to view content as full screen without TMI interface elements
 • When editing, confirm save when navigating away with unsaved changes
 
 Nodes
@@ -71,5 +67,4 @@ Profile
 Runtime
 • load relative Crown files with ./file.cr
 • HTML: Inject base href when rendering for relative file inclusion
-• load relative CrownScript files with ./file.cr
-• plain text -> markdown
+• plain text -> markdown ?
