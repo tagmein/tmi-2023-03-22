@@ -50,6 +50,7 @@ Interface
 • loading indicator while loading
 • mobile view
 • When editing, confirm save when navigating away with unsaved changes
+• Recreate preview frame instead of setting srcdoc to prevent location history entry creation
 
 Nodes
 • rename
