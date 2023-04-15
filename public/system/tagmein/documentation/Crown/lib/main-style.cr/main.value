@@ -1,0 +1,19 @@
+set style [ get element, call style ]
+get build, call [ get document head ] [ get style ]
+set [ get style ] textContent '
+ body {
+  color: #f0f0f0;
+  padding: 0 20px;
+  font-size: 18px;
+  line-height: 1.65;
+ }
+ a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid;
+ }
+ pre {
+  font-size: inherit;
+  white-space: pre-wrap;
+ }
+'

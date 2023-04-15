@@ -12,8 +12,23 @@ const COMMENT = {
  },
 }
 
+const STRING_ESCAPE = {
+ name: 'string_escape',
+ '\\'(control) {
+  control.queue += '\\'
+  return STRING
+ },
+ "'"(control) {
+  control.queue += "'"
+  return STRING
+ },
+}
+
 const STRING = {
  name: 'string',
+ '\\'(control) {
+  return STRING_ESCAPE
+ },
  "'"(control) {
   control.statement.push(control.queue)
   control.queue = ''
@@ -256,6 +271,10 @@ function crown(
    const arg = uncrown(argumentCrown)
    currentValue = currentValue <= arg
   },
+  async '='(argumentCrown) {
+   const arg = uncrown(argumentCrown)
+   currentValue = currentValue === arg
+  },
   async '>'(argumentCrown) {
    const arg = uncrown(argumentCrown)
    currentValue = currentValue > arg
@@ -267,7 +286,7 @@ function crown(
   add(...argumentCrowns) {
    currentValue = argumentCrowns.reduce(
     (sum, x) => sum + uncrown(x),
-    0
+    typeof currentValue === 'number' ? currentValue : 0
    )
   },
   at(...path) {
@@ -378,7 +397,7 @@ function crown(
   divide(...argumentCrowns) {
    currentValue = argumentCrowns.reduce(
     (product, x) => product / uncrown(x),
-    1
+    typeof currentValue === 'number' ? currentValue : 1
    )
   },
   do() {
@@ -420,10 +439,6 @@ function crown(
    }
    currentValue = result
    return me
-  },
-  async is(argumentCrown) {
-   const arg = uncrown(argumentCrown)
-   currentValue = currentValue === arg
   },
   async false(instructionCrown) {
    if (!currentValue) {
@@ -528,6 +543,10 @@ function crown(
    currentValue = groups
    return me
   },
+  async is(argumentCrown) {
+   const arg = uncrown(argumentCrown)
+   currentValue = currentValue === arg
+  },
   async list(definition = []) {
    currentValue = []
    for (const [v] of definition) {
@@ -594,7 +613,7 @@ function crown(
   multiply(...argumentCrowns) {
    currentValue = argumentCrowns.reduce(
     (product, x) => product * uncrown(x),
-    1
+    typeof currentValue === 'number' ? currentValue : 1
    )
   },
   new(...argumentCrowns) {
@@ -705,7 +724,7 @@ function crown(
   subtract(...argumentCrowns) {
    currentValue = argumentCrowns.reduce(
     (sum, x) => sum - uncrown(x),
-    0
+    typeof currentValue === 'number' ? currentValue : 0
    )
   },
   template(template, ...parameterCrowns) {

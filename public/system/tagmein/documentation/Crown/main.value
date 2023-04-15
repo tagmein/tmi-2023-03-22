@@ -1,19 +1,77 @@
-<style>
- body {
-  color: #f0f0f0;
-  padding: 0 20px;
-  font-size: 18px;
-  line-height: 1.65;
- }
- pre {
-  font-size: inherit;
-  white-space: pre-wrap;
- }
- a {
-  color: inherit;
-  text-decoration: none;
-  border-bottom: 1px solid;
- }
-</style>
-<h1>Crown</h1>
-<p>Documentation coming soon, in the meantime, look at the *.cr files in the source code for Tag Me In: <a target="_blank" href="https://github.com/tagmein/tmi-2023-03-22">https://github.com/tagmein/tmi-2023-03-22</a>
+set document [ at document ]
+
+set build [ load ./lib/build.cr, point ]
+set element [ load ./lib/element.cr, point ]
+do [ load ./lib/main-style.cr, point ]
+set header [ load ./lib/header.cr, point ]
+set paragraph [ load ./lib/paragraph.cr, point ]
+set code [ load ./lib/code.cr, point ]
+
+get header, call Crown
+get paragraph, call '
+ Crown is a metaprogramming syntax that can be implemented in any programming environment. You are currently viewing a document programmed with Crown for JavaScript.
+'
+
+get paragraph, call 'The Crown engine runs code one command at a time, and maintains an \'implicit focus\' at all times. This means that the results of the last command are always available for the next command, and so on. A sample Crown program might look like:'
+
+get code, call 'add 4 5, log The sum is [ current ] # prints \'The sum is 9\' to the console'
+
+get paragraph, call 'Crown has only 7 syntax characters:'
+
+get code, call 'Name           Symbol       Description
+----           ------       -----------
+new line       <line break> separates statements       
+comma          ,            separates statements, is equivalent to a new line
+left bracket   [            opens a block
+right bracket  ]            closes a block
+single quote   \'            opens or closes a string literal
+escape         \\            prevents a following \' from ending a string literal (use \\\\ for a literal \\) 
+hash           #            marks the rest of the line as a comment
+'
+
+get paragraph, call 'There are many named commands in Crown, as follows:'
+
+get code, call 'Command    Example code                                 Description
+-------    ------------                                 -----------
+#          # a comment                                  Creates a comment
+<          value 4, < 5                                 Returns true if current is less than argument
+<=         value 5, <= 5                                Returns true if current is less than or equal to argument
+=          value 5, = 5                                 Returns true if current is equal to argument
+>          value 6, >= 5                                Returns true if current is greater than argument
+>=         value 5, >= 5                                Returns true if current is greater than or equal to argument
+add        add 1 2 3                                    Sums all arguments, and the focus if it is a number (example returns 6)
+at         at document body                             Sets focus to a property of focus (example will have focus set to <body> element)
+call       at alert, call Hello                         Invokes a function (example calls alert with \'Hello\')
+clone      clone, set x 4                               Clones the current scope, retaining inheritance (in example, new scope has x set to 4)
+comment    log [ comment ]                              Returns the last comment (example returns \'a comment\')
+current    value 4, log [ current ]                     Returns the implicit focus (example logs \'4\')
+default    get foo, default 4                           Returns the argument if the focus is undefined or null
+divide     value 4, divide 2                            Divides the focus by the argument(s)
+do         do [ call abc ]                              Run some code without modifying the focus
+each       each [ function item index [ ... ] ]         Calls a function with two arguments for each item in an Array
+entries    entries [ function key value index [ ... ] ] Calls a function with three arguments for each key value pair in an Object
+false      value 4, > 5, false [ log No ]               Runs the associated code block if focus is falsy. This will log \'No\', since 4 is not > 5
+filter     filter [ function item index [ ... ] ]       Filters an array by calling a function with two arguments for each item in an Array
+function   function arg1 arg2 [ ... ]                   Creates a function with some named arguments (2 in example) and a function block
+get        get foo, log                                 Read the name from the current scope (example will log the value of foo)
+group      group [ function item [ get item key ] ]     Groups an Array by the return value of the given function. 
+is         value 5, is 5                                The same as =
+list       list [ 1, 2, 3, 4 ]                          Creates an Array
+load       load ./path/to/file.cr                       Loads a Crown module into memory, but does not execute it
+log        log foo is [ get foo ]                       Logs all arguments to the console (example logs \'foo is 4\' assuming foo = 4)      
+multiply   multiply 3 9                                 Returns the product of all arguments, and the focus if it is a number (example returns 27)
+not        value 4, is 5, not                           Boolean invert of focus (example returns true)
+object     object [ a 1, b 2 ]                          Creates an object with given key-value pairs (example returns { a: 1, b: 2 })
+point      set a [ load ./file.cr, point ]              Invokes focus with the scope as an argument (example runs file.cr, sets a to the result)
+promise    promise [ function resolve reject [ ... ] ]  Returns a promise, which can be resolved or rejected later with e.g. [ get resolve, call 4 ]
+regexp     regexp foo.*                                 Creates a regular expression
+run        run \'log 42\'                                 Runs string argument as Crown code (example logs 42)
+set        set foo 4                                    Sets a named variable in scope (example sets foo to 4)
+subtract   value 10, subtract 2 3                       Subtracts arguments from focus (example returns 5)
+template   template \'Hello, %0\' Human                   Inserts arguments into a string given as the first argument (example returns \'Hello, Human\')
+true       value 6, > 5, true [ log Big ]               Runs the associated code block if focus is truthy. This will log Big since 6 > 5.
+unset      unset foo                                    Forgets a named variable in scope
+value      value 5                                      Create a literal value (example returns 5)
+'
+
+set [ get document body parentElement ] scrollTop 2000

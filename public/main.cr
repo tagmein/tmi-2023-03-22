@@ -140,6 +140,8 @@ set route [
     get responseData value
    ] [
     get responseData permissions
+   ] [
+    get currentChannel
    ]
   ]
  ]

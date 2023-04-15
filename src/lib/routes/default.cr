@@ -17,9 +17,25 @@ set contentTypes [
 set fs [ get require, call fs ]
 set path [ get require, call path ]
 
+set searchPath [ object ]
+
+get requestUrl startsWith, call /system, true [
+ set [ get searchPath ] current [
+  template %0/main.value [ get requestUrl ]
+ ]
+], false [
+ get requestUrl startsWith, call /data, true [
+  set [ get searchPath ] current [
+   template %0/main.value [ get requestUrl ]
+  ]
+ ], false [
+  set [ get searchPath ] current [ get requestUrl ]
+ ]
+]
+
 get fileSystem readFile, call [
  get path join
- call [ get publicBase ] [ get requestUrl ]
+ call [ get publicBase ] [ get searchPath current ]
 ] utf-8 [
  set extension [
   get path extname, call [ get requestUrl ]

@@ -15,6 +15,7 @@ get surface classList add, call [
  get style, point
 ]
 
+set computedBaseStaticPath [ object ]
 set filterNodesContainer [ object ]
 set filterNodesInput [ object ]
 set newNodeContainer [ object ]
@@ -92,7 +93,7 @@ set renderPreview [
  <meta charset="utf-8" />
  <meta name="viewport" content="width=device-width, initial-scale=1" />
  <script>
-  globalThis.basePath = %0
+  globalThis.basePath = %0 + %1
  </script>
  <script type="text/javascript" src="/crown.js"></script>
 </head>
@@ -102,7 +103,7 @@ set renderPreview [
  <script type="text/javascript">
   async function main() {
    await loadCrownDependencies()
-   await crown().run([%1])
+   await crown().run([%2])
   }
   main().catch(e => console.error(e))
  </script>
@@ -111,6 +112,10 @@ set renderPreview [
 </html>' [
       get JSON stringify, call [
        get location origin
+      ]
+     ] [
+      get JSON stringify, call [
+       get computedBaseStaticPath current
       ]
      ] [
       get JSON stringify, call [ get value ]
@@ -482,6 +487,11 @@ get isViewOnly, false [
    ]
    get responseData success, true [
     set [ get newNodeInput ] value ''
+    get setTimeout, call [
+      function [
+        get newNodeInput focus, call
+      ]
+    ] 250
    ], false [
     get alert, call 'Unable to create node, maybe it exists?'
    ]
@@ -635,11 +645,21 @@ object [
   ]
  ]
  setValue [
-  function value permissions [
+  function value permissions currentChannel [
    set [ get loadedHash ] current [
     get location hash,
     at substring, call 1
    ]
+   get currentChannel key, is tagmein, true [
+    set [ get computedBaseStaticPath ] current [
+     template /system/%0 [ get loadedHash current ]
+    ]
+   ], false [
+    set [ get computedBaseStaticPath ] current [
+     template /data/%0 [ get loadedHash current ]
+    ]
+   ]
+   log [ get computedBaseStaticPath ]
    get renderPreview, call [ get value ]
    get isViewOnly, false [
     set [ get valueEditor current ] value [ get value ]

@@ -1,0 +1,7 @@
+function text appendTo [
+ set h1 [ get element, call h1 ]
+ set [ get h1 ] textContent [ get text ]
+ get build, call [
+  get appendTo, default [ get document body ]
+ ] [ get h1 ]
+]
