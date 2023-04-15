@@ -1,7 +1,4 @@
-set surface [
- get element, call div
-]
-
+set surface [ get element, call ]
 get surface classList add, call [
  set name surface
  set rules '
@@ -22,18 +19,36 @@ set newNodeContainer [ object ]
 set nodeList [ object ]
 set valueEditor [ object ]
 
-set previewFrame [
- get element, call iframe
-]
-
-get previewFrame classList add, call [
- set name previewFrame
+set documentArea [ get element, call ]
+get documentArea classList add, call [
+ set name documentArea
  set rules '
   & {
-   background-color: transparent;
-   border: none;
+   display: flex;
+   flex-direction: column;
+   flex-grow: 1;
+   min-width: 400px;
+  }
+ '
+ get style, point
+]
+
+set documentInteractiveArea [ get element, call ]
+
+set previewArea [ get element, call ]
+get previewArea classList add, call [
+ set name previewArea
+ set rules '
+  & {
    min-width: 400px;
    flex-grow: 1;
+  }
+
+  & > iframe {
+   background-color: transparent;
+   border: none;
+   height: 100%;
+   width: 100%;
   }
  '
  get style, point
@@ -41,9 +56,11 @@ get previewFrame classList add, call [
 
 set renderPreview [
  function value [
-  at [
-   get value
-  ] startsWith, call '
+  set [ get previewArea ] innerHTML ''
+  set previewFrame [
+   get element, call iframe
+  ]
+  get value startsWith, call '
 '
   true [
    set [ get previewFrame ] srcdoc [
@@ -123,6 +140,7 @@ set renderPreview [
     ]
    ]
   ]
+  get build, call [ get previewArea ] [ get previewFrame ]
  ]
 ]
 
@@ -536,7 +554,9 @@ get isViewOnly, false [
 
 get build
 do [ call [ get document body ] [ get surface ] ]
-do [ call [ get surface ] [ get previewFrame ] ]
+do [ call [ get surface ] [ get documentArea ] ]
+do [ call [ get documentArea ] [ get previewArea ] ]
+do [ call [ get documentArea ] [ get documentInteractiveArea ] ]
 
 set appendLink [
  function node label href [
@@ -646,6 +666,7 @@ object [
  ]
  setValue [
   function value permissions currentChannel [
+   set [ get documentInteractiveArea ] innerHTML ''
    set [ get loadedHash ] current [
     get location hash,
     at substring, call 1
@@ -669,6 +690,11 @@ object [
      get valueEditor current setAttribute, call readonly readonly
     ]
    ]
+  ]
+ ]
+ insertDocumentElement [
+  function documentElement [
+   get build, call [ get documentInteractiveArea ] [ get documentElement ]
   ]
  ]
 ]

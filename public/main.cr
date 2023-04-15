@@ -91,6 +91,11 @@ set surface [
  at [ load ./lib/surface.cr ], point
 ]
 
+set tmiPermissionGate [
+ load ./lib/tmi-permission-gate.cr, point
+ call [ get surface insertDocumentElement ]
+]
+
 set route [
  function [
   get location hash length

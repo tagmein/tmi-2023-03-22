@@ -244,6 +244,20 @@ const SCOPE = {
  PARENT: Symbol('SCOPE:PARENT'),
 }
 
+function smartJoin(basePath, filePath) {
+ if (filePath.startsWith('//')) {
+  return filePath.substring(1)
+ } else if (filePath.startsWith('/')) {
+  return (
+   '/' +
+   basePath.split('/').slice(0, 2).join('/') +
+   filePath
+  )
+ } else {
+  return path.join(basePath, filePath)
+ }
+}
+
 function uncrown(value) {
  return typeof value?.current === 'function'
   ? value.current()
@@ -563,7 +577,7 @@ function crown(
    const filePath = uncrown(_filePath)
    await new Promise(function (resolve, reject) {
     fs.readFile(
-     path.join(basePath, filePath),
+     smartJoin(basePath, filePath),
      'utf-8',
      function (error, content) {
       if (error) {

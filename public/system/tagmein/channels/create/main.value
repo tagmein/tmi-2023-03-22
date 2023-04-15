@@ -4,7 +4,7 @@ set top [ at top ]
 set document [ get self document ]
 
 set tmiClient [
- load /tmi-client.cr, point
+ load //tmi-client.cr, point
  call [ get self ] [ get top ]
 ]
 
