@@ -73,5 +73,3 @@ true       value 6, > 5, true [ log Big ]               Runs the associated code
 unset      unset foo                                    Forgets a named variable in scope
 value      value 5                                      Create a literal value (example returns 5)
 '
-
-set [ get document body parentElement ] scrollTop 2000
