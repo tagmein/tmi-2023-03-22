@@ -477,6 +477,22 @@ function crown(
    currentValue = filteredValue
    return me
   },
+  async find(argumentCrown) {
+   if (!Array.isArray(currentValue)) {
+    throw new Error(
+     'Can only use "find" when current value is an Array'
+    )
+   }
+   const callback = uncrown(argumentCrown)
+   for (let i = 0; i < currentValue.length; i++) {
+    if (await uncrown(await callback(currentValue[i], i))) {
+     currentValue = currentValue[i]
+     return me
+    }
+   }
+   currentValue = undefined
+   return me
+  },
   function(...argumentNames) {
    const functionImplementation = argumentNames.pop()
    currentValue = async function (...runtimeArguments) {

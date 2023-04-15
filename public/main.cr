@@ -118,8 +118,9 @@ set route [
     get getChannelKey, call
    ]
    set currentChannel [
-    get responseData channels find, call [
+    get responseData channels, find [
      function candidateChannel [
+      log [ get candidateChannel ]
       get candidateChannel key, is [
        get currentChannelKey
       ]

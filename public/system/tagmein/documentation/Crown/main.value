@@ -50,11 +50,12 @@ divide     value 4, divide 2                            Divides the focus by the
 do         do [ call abc ]                              Run some code without modifying the focus
 each       each [ function item index [ ... ] ]         Calls a function with two arguments for each item in an Array
 entries    entries [ function key value index [ ... ] ] Calls a function with three arguments for each key value pair in an Object
-false      value 4, > 5, false [ log No ]               Runs the associated code block if focus is falsy. This will log \'No\', since 4 is not > 5
-filter     filter [ function item index [ ... ] ]       Filters an array by calling a function with two arguments for each item in an Array
+false      value 4, > 5, false [ log No ]               Runs the associated code block if focus is falsy This will log \'No\', since 4 is not > 5
+filter     filter [ function item index [ ... ] ]       Filters an array by calling a test function for each item in an Array
+find       find [ function item index [ ... ] ]         Extracts a single item from an array by calling a test function for each item until a match is found
 function   function arg1 arg2 [ ... ]                   Creates a function with some named arguments (2 in example) and a function block
 get        get foo, log                                 Read the name from the current scope (example will log the value of foo)
-group      group [ function item [ get item key ] ]     Groups an Array by the return value of the given function. 
+group      group [ function item [ get item key ] ]     Groups an Array by the return value of the given function
 is         value 5, is 5                                The same as =
 list       list [ 1, 2, 3, 4 ]                          Creates an Array
 load       load ./path/to/file.cr                       Loads a Crown module into memory, but does not execute it
@@ -69,7 +70,7 @@ run        run \'log 42\'                                 Runs string argument a
 set        set foo 4                                    Sets a named variable in scope (example sets foo to 4)
 subtract   value 10, subtract 2 3                       Subtracts arguments from focus (example returns 5)
 template   template \'Hello, %0\' Human                   Inserts arguments into a string given as the first argument (example returns \'Hello, Human\')
-true       value 6, > 5, true [ log Big ]               Runs the associated code block if focus is truthy. This will log Big since 6 > 5.
+true       value 6, > 5, true [ log Big ]               Runs the associated code block if focus is truthy This will log Big since 6 > 5
 unset      unset foo                                    Forgets a named variable in scope
 value      value 5                                      Create a literal value (example returns 5)
 '

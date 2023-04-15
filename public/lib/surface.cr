@@ -606,7 +606,7 @@ object [
      set parentLink [ get element, call ]
      get parentLink classList add, call node
      get parentLink setAttribute, call data-parent true
-     get index, is [ add -1 [ get segments length ]], true [
+     get index, is [ value -1, add [ get segments length ]], true [
        get parentLink setAttribute, call data-current true
        set [ get document ] title [
         template '%1 - %0' [ get currentChannel name ] [
