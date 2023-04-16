@@ -120,7 +120,7 @@ set renderPreview [
  <script type="text/javascript">
   async function main() {
    await loadCrownDependencies()
-   await crown().run([%2])
+   await crown().run([decodeURIComponent(%2)])
   }
   main().catch(e => console.error(e))
  </script>
@@ -135,7 +135,9 @@ set renderPreview [
        get computedBaseStaticPath current
       ]
      ] [
-      get JSON stringify, call [ get value ]
+      get JSON stringify, call [
+       get encode, call [ get value ]
+      ]
      ]
     ]
    ]

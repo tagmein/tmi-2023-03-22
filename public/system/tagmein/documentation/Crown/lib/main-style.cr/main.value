@@ -12,8 +12,28 @@ set [ get style ] textContent '
   text-decoration: none;
   border-bottom: 1px solid;
  }
+ table.code-column-2 tr:not(:first-of-type) td:nth-child(2),
  pre {
-  font-size: inherit;
+  font-family: monospace;
+  font-size: 95%;
   white-space: pre-wrap;
+ }
+ table {
+  width: 100%;
+  border-collapse: collapse;
+ }
+ table tr:first-of-type {
+  border-bottom: 1px solid;
+ }
+ td {
+  padding: 10px;
+  vertical-align: top;
+  white-space: pre-wrap;
+ }
+ iframe {
+  background-color: white;
+  border: 2px solid #797979;
+  box-sizing: border-box;
+  width: 100%;
  }
 '

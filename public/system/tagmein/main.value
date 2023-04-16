@@ -17,14 +17,14 @@
 </style>
 <h1>Welcome to Tag Me In</h1>
 <p>
-Tag Me In is a collaborative code editor that uses HTML, or a programming language called <a target="_top" href="#tagmein/documentation/Crown">Crown</a>.</p>
+Tag Me In is a collaborative code editor that uses HTML, or a programming language called <a target="_top" href="#tagmein/documentation/Crown">Crown</a>. Tag Me In is itself written in Crown.</p>
 <ul>
  <li>HTML documents start with &lt;</li>
  <li>Plain text documents start with a blank line</li>
- <li>All other documents are CrownScript programs</li>
+ <li>All other documents are Crown programs</li>
 </ul>
  <h3>Step 1: Sign in</h3>
- <p>Click on "<a href="#tagmein/account" target="_top">Sign in</a>" in the upper right corner. If you already have an account, enter your email address and password and press the Sign in button. If this is your first time signing in, check the "Create account if none exists" checkbox.</p>
+ <p>Click on "<a href="#tagmein/account" target="_top">Sign in</a>" in the upper right corner. You'll have to approve the request for tagmein/account to read your account information. If you already have an account, enter your email address and password and press the Sign in button. If this is your first time signing in, check the "Create account if none exists" checkbox.</p>
  <h3>Step 2: Create a channel</h3>
  <p>Go to <a href="#tagmein/channels/create" target="_top">Tag Me In &rarr; channels &rarr; create</a>, enter a channel name, and click "Create". You can also interact directly with the preview panel that appears when hovering over a file.</p>
  <p>When your channel is created, you'll be redirected automatically.</p>

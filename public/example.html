@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+
+<head>
+ <meta charset="utf-8" />
+ <title>My Website</title>
+ <script type="text/javascript" src="./crown.js"></script>
+</head>
+
+<body>
+ <noscript>JavaScript is required</noscript>
+ <script type="text/javascript">
+  async function main() {
+   await loadCrownDependencies()
+   await crown().run`
+    set document [ at document ]
+    set greeting [ get document createElement, call h1 ]
+    get document body appendChild, call [ get greeting ]
+    set [ get greeting ] textContent 'Hello, world'
+   `
+   // or, if your Crown code is in a file:
+   // await crown().runFile('./main.cr')
+  }
+  main().catch(e => console.error(e))
+ </script>
+</body>
+
+</html>
