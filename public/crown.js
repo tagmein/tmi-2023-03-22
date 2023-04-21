@@ -172,13 +172,6 @@ const globalBasePath =
 let fs, path
 
 if (typeof require !== 'function') {
- globalThis.loadCrownDependencies = async function () {
-  const [_fs, _path] = await Promise.all(
-   ['fs', 'path'].map(globalThis.require)
-  )
-  fs = _fs
-  path = _path
- }
  globalThis.browserModules = {}
  const browserModuleDefinitions = {
   fs() {
@@ -238,6 +231,9 @@ if (typeof require !== 'function') {
   }
   return globalThis.browserModules[requirePath]
  }
+
+ fs = browserModuleDefinitions.fs()
+ path = browserModuleDefinitions.path()
 }
 
 const SCOPE = {

@@ -28,13 +28,38 @@ get documentArea classList add, call [
    flex-direction: column;
    flex-grow: 1;
    min-width: 400px;
+   position: relative;
   }
  '
  get style, point
 ]
 
 set documentInteractiveArea [ get element, call ]
+get documentInteractiveArea classList add, call [
+ set name documentInteractiveArea
+ set rules '
+  & {
+   align-items: center;
+   background-color: #ffffff79;
+   bottom: 0;
+   display: flex;
+   flex-direction: column;
+   flex-grow: 1;
+   justify-content: space-evenly;
+   left: 0;
+   overflow-x: hidden;
+   overflow-y: auto;
+   position: absolute;
+   right: 0;
+   top: 0;
+  }
 
+  &:empty {
+    display: none;
+  }
+ '
+ get style, point
+]
 set previewArea [ get element, call ]
 get previewArea classList add, call [
  set name previewArea
@@ -119,7 +144,6 @@ set renderPreview [
  <noscript>JavaScript is required</noscript>
  <script type="text/javascript">
   async function main() {
-   await loadCrownDependencies()
    await crown().run([decodeURIComponent(%2)])
   }
   main().catch(e => console.error(e))

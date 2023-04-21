@@ -42,7 +42,6 @@ get code, call '<!doctype html>
  <noscript>JavaScript is required</noscript>
  <script type="text/javascript">
   async function main() {
-   await loadCrownDependencies()
    await crown().run`
     set document [ at document ]
     set greeting [ get document createElement, call h1 ]

@@ -3,31 +3,45 @@ set permissionStatusClass [
  set rules '
   & {
    background-color: #707070;
-   border-top: 1px solid #a0a0a0;
+   border-radius: 8px;
+   border: 1px solid #a0a0a0;
+   box-shadow: 0 0 16px #00000049;
    color: #ffffff;
    display: flex;
    flex-direction: row;
    flex-grow: 0;
    flex-shrink: 0;
+   max-width: calc(100% - 100px);
    overflow: hidden;
+   width: 80%;
+  }
+
+  & > div {
+   flex-grow: 1;
+   padding: 8px 16px;
+  }
+
+  & h3 {
+   font-size: 28px;
+   padding: 0;
+   margin: 0;
   }
 
   & label {
-   flex-grow: 1;
    font-size: 18px;
-   line-height: 2;
-   padding: 4px 8px;
+   padding: 0;
   }
 
   & button {
    background-color: transparent;
-   border-radius: 0;
    border: none;
    border-left: 1px solid #a0a0a0;
+   border-radius: 0;
    color: #ffffff;
    cursor: pointer;
    font-size: 18px;
-   padding: 4px 12px;
+   font-weight: bold;
+   padding: 4px 24px;
   }
 
   & button:hover {
@@ -56,6 +70,9 @@ function insertPermissionRequestElement [
     get permissionStatusElement classList add, call [
      get permissionStatusClass
     ]
+    set permissionStatusMessage [ get element, call ]
+    set permissionStatusHeader [ get element, call h3 ]
+    set [ get permissionStatusHeader ] textContent 'Permission request'
     set permissionStatusText [ get element, call label ]
     set [ get permissionStatusText ] textContent [
      template '%0 is requesting %1' [
@@ -70,6 +87,12 @@ function insertPermissionRequestElement [
     set [ get denyButton ] textContent Deny
     get build
     do [ call [ get permissionStatusElement ] [
+     get permissionStatusMessage
+    ] ]
+    do [ call [ get permissionStatusMessage ] [
+     get permissionStatusHeader
+    ] ]
+    do [ call [ get permissionStatusMessage ] [
      get permissionStatusText
     ] ]
     do [ call [ get permissionStatusElement ] [

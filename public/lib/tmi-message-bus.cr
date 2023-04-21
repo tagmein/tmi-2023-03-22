@@ -1,7 +1,7 @@
 function message [
  # log incoming message [ get message data ]
  set address [
-  get message originalTarget location hash substring
+  get message target location hash substring
   call 1
  ]
  get tmiPermissionGate, call [ get address ] [
