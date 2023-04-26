@@ -1,0 +1,17 @@
+function [
+ set styles [
+  get global document createElement
+   call style
+ ]
+
+ set [ get styles ] textContent '
+  body {
+   background-color: black;
+   color: white;
+   padding: 10px 35px;
+  }
+ '
+
+ get global document head appendChild
+  call [ get styles ]
+]

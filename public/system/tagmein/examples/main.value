@@ -1,6 +1,10 @@
+<style>
+body {
+ white-space: pre-wrap; color: white;
+}
+a { color: inherit; }
+</style>Here are some examples
 
-Here are some examples
-
-A calculator, to start
+A <a href="/#tagmein/examples/calculator" target="_top">calculator</a>, to start
 
 Next, a to do list

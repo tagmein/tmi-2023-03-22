@@ -1,0 +1,15 @@
+set global [ current ]
+
+load ./styles.cr, point, call # this loads styles
+
+set greeting [
+ get global document createElement
+  call h1
+]
+
+set [ get greeting ] textContent 'Hello World'
+
+get global document body appendChild
+ call [ get greeting ]
+
+# note that Crown files must end in a new line for the final statement to be run
